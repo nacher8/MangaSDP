@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		393605342F1FFBA700B26EB7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393605312F1FFBA700B26EB7 /* ContentView.swift */; };
 		393605362F1FFBA700B26EB7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 393605302F1FFBA700B26EB7 /* Assets.xcassets */; };
+		3936055C2F1FFE5800B26EB7 /* MangaSDPIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 3936055B2F1FFE5800B26EB7 /* MangaSDPIcon.icon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		393605222F1FFA9000B26EB7 /* MangaSDP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MangaSDP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		393605302F1FFBA700B26EB7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		393605312F1FFBA700B26EB7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		3936055B2F1FFE5800B26EB7 /* MangaSDPIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = MangaSDPIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -58,6 +60,7 @@
 				393605312F1FFBA700B26EB7 /* ContentView.swift */,
 				393605372F1FFBAE00B26EB7 /* System */,
 				393605302F1FFBA700B26EB7 /* Assets.xcassets */,
+				3936055B2F1FFE5800B26EB7 /* MangaSDPIcon.icon */,
 			);
 			path = MangaSDP;
 			sourceTree = "<group>";
@@ -126,6 +129,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3936055C2F1FFE5800B26EB7 /* MangaSDPIcon.icon in Resources */,
 				393605362F1FFBA700B26EB7 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -268,7 +272,7 @@
 		3936052E2F1FFA9100B26EB7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = MangaSDPIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -302,7 +306,7 @@
 		3936052F2F1FFA9100B26EB7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = MangaSDPIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
