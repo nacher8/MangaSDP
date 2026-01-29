@@ -12,7 +12,7 @@ import SwiftData
 struct MangaSDPApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainTabView()
         }
         .modelContainer(for: [MangaItem.self,
                               Author.self,

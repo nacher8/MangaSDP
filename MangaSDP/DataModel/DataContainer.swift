@@ -13,13 +13,15 @@ actor DataContainer {
     private let repository = Network()
     
     @AppStorage("page") private var actualPage: Int = 1
+    @AppStorage("totalMangas") private var totalMangas: Int = 0
     
     func loadInitialData() async throws {
         let mangas = try await getMangas()
-        try loadMangas(mangas: mangas)
+        updatePagination(from: mangas.metadata)
+        try loadMangas(mangas: mangas.items)
     }
     
-    func getMangas() async throws -> [MangaItemDTO] {
+    func getMangas() async throws -> Manga {
         async let getMangas = repository.getMangas(page: actualPage)
         return try await getMangas
     }
@@ -42,7 +44,7 @@ actor DataContainer {
                 mangaItem.endDate = manga.endDate
                 mangaItem.volumes = manga.volumes
                 mangaItem.chapters = manga.chapters
-                mangaItem.status = manga.status
+                mangaItem.status = manga.status.flatMap(MangaStatus.init(rawValue:))
                 mangaItem.score = manga.score
                 mangaItem.url = manga.url
                 mangaItem.mainPicture = manga.mainPicture
@@ -57,19 +59,13 @@ actor DataContainer {
                                       endDate: manga.endDate ?? "",
                                       volumes: manga.volumes ?? 0,
                                       chapters: manga.chapters ?? 0,
-                                      status: manga.status ?? "",
+                                      status: manga.status.flatMap(MangaStatus.init(rawValue:)),
                                       score: manga.score ?? 0.0,
                                       url: manga.url ?? "",
                                       mainPicture: manga.mainPicture ?? "")
                 modelContext.insert(mangaItem)
             }
-            
-            print("📚 Cargando manga: \(manga.title ?? "Manga sin titulo")")
-            print("   Genres en DTO: \(manga.genres.count)")
-            print("   Authors en DTO: \(manga.authors.count)")
-            print("   Themes en DTO: \(manga.themes.count)")
-            print("   Demographic en DTO: \(manga.demographics.count)")
-            
+
             mangaItem.genres = try loadGenres(manga.genres)
             mangaItem.themes = try loadThemes(manga.themes)
             mangaItem.demographics = try loadDemographics(manga.demographics)
@@ -156,7 +152,6 @@ actor DataContainer {
         var genres: [Genre] = []
         
         for genreDTO in genresDTO {
-            print("   - ID: \(genreDTO.id), Nombre: \(genreDTO.genre)")
             let genreID = genreDTO.id
             var fetch = FetchDescriptor<Genre>(predicate: #Predicate { $0.id == genreID })
             fetch.fetchLimit = 1
@@ -170,7 +165,6 @@ actor DataContainer {
                               genre: genreDTO.genre)
                 modelContext.insert(genre)
             }
-            print("   ✅ Total géneros en array: \(genres.count)")
             genres.append(genre)
         }
         
@@ -180,6 +174,26 @@ actor DataContainer {
     func loadNextPage() async throws {
         actualPage += 1
         let mangas = try await repository.getMangas(page: actualPage)
-        try loadMangas(mangas: mangas)
+        updatePagination(from: mangas.metadata)
+        try loadMangas(mangas: mangas.items)
+    }
+    
+    func refreshAll() async throws {
+        actualPage = 1
+        
+        let fetch = FetchDescriptor<MangaItem>()
+        let allMangas = try modelContext.fetch(fetch)
+        
+        for manga in allMangas {
+            modelContext.delete(manga)
+        }
+        
+        try modelContext.save()
+        
+        try await loadInitialData()
+    }
+    
+    private func updatePagination(from metadata: MetadataDTO) {
+        totalMangas = metadata.total
     }
 }

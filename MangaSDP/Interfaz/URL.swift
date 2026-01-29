@@ -14,7 +14,7 @@ extension URL {
     static func getMangas(page: Int) -> URL {
         let url = api.appending(path: "/list/mangas")
         let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
-                                          URLQueryItem(name: "per", value: "3")]
+                                          URLQueryItem(name: "per", value: "10")]
         return url.appending(queryItems: queryItems)
     }
 }
