@@ -15,7 +15,7 @@ struct Network: NetworkRepository {
     func getMangas() async throws(NetworkError) -> Manga {
         return try await getJSON(.get(url: .getMangas), type: Manga.self)
     }
-    func getMangas(page: Int) async throws(NetworkError) -> [MangaItemDTO] {
-        return try await getJSON(.get(url: .getMangas(page: page)), type: Manga.self).items
+    func getMangas(page: Int) async throws(NetworkError) -> Manga {
+        return try await getJSON(.get(url: .getMangas(page: page)), type: Manga.self)
     }
 }
