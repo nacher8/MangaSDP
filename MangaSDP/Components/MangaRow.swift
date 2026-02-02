@@ -10,11 +10,6 @@ import SwiftUI
 struct MangaRow: View {
     let manga: MangaItem
     
-    private var imageURL: URL? {
-        guard let mainPicture = manga.mainPicture else { return nil }
-        return URL(string: mainPicture)
-    }
-    
     var body: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading) {
@@ -56,50 +51,22 @@ struct MangaRow: View {
                 .font(.caption)
             }
             Spacer()
-            AsyncImage(url: imageURL) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                        .frame(width: 90, height: 150)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 90, height: 150)
-                        .clipShape(RoundedRectangle(cornerRadius: 11))
-                case .failure:
-                    placeholder
-                @unknown default:
-                    placeholder
-                }
-            }
+            MangaImageView(mainPicture: manga.mainPicture)
         }
         .frame(height: 150)
         .padding()
         .background {
             RoundedRectangle(cornerRadius: 35)
-                .fill(Color.white)
+                .fill(Color(.systemBackground))
                 .overlay(
                     RoundedRectangle(cornerRadius: 35)
-                        .stroke(Color.white, lineWidth: 0.5)
+                        .stroke(Color(.separator), lineWidth: 0.5)
                         .shadow(color: .black.opacity(0.15),
                                 radius: 2,
                                 x: 0,
                                 y: 1)
                 )
         }
-    }
-    
-    private var placeholder: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 11)
-                .fill(Color.gray.opacity(0.2))
-            
-            Image(systemName: "book.closed")
-                .font(.largeTitle)
-                .foregroundStyle(.secondary)
-        }
-        .frame(width: 90, height: 150)
     }
 }
 

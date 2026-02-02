@@ -22,15 +22,15 @@ final class MangaItem {
     var chapters: Int?
     var status: MangaStatus?
     var score: Double?
-    var url: String?
-    var mainPicture: String?
+    var url: URL?
+    var mainPicture: URL?
     
     @Relationship(deleteRule: .cascade) var themes: [Theme] = []
     @Relationship(deleteRule: .cascade) var demographics: [Demographic] = []
     @Relationship(deleteRule: .nullify) var authors: [Author] = []
     @Relationship(deleteRule: .cascade) var genres: [Genre] = []
     
-    init(id: Int, title: String?, titleJapanese: String?, titleEnglish: String?, sypnosis: String?, background: String?, startDate: String?, endDate: String?, volumes: Int?, chapters: Int?, status: MangaStatus?, score: Double?, url: String?, mainPicture: String?) {
+    init(id: Int, title: String?, titleJapanese: String?, titleEnglish: String?, sypnosis: String?, background: String?, startDate: String?, endDate: String?, volumes: Int?, chapters: Int?, status: MangaStatus?, score: Double?, url: URL?, mainPicture: URL?) {
         self.id = id
         self.title = title
         self.titleJapanese = titleJapanese
@@ -122,8 +122,8 @@ extension MangaItem {
                                  chapters: 520,
                                  status: .finished,
                                  score: 8.41,
-                                 url: "https://myanimelist.net/manga/42/Dragon_Ball",
-                                 mainPicture: "https://cdn.myanimelist.net/images/manga/1/267793l.jpg")
+                                 url: URL(string: "https://myanimelist.net/manga/42/Dragon_Ball"),
+                                 mainPicture: URL(string: "https://cdn.myanimelist.net/images/manga/1/267793l.jpg"))
 }
 
 enum MangaStatus: String, Codable {
@@ -158,8 +158,36 @@ extension MangaItem {
             .map { "\($0.genre)" }
             .joined(separator: ", ")
     }
+    
+    var themesString: String {
+        themes
+            .map { "\($0.theme)" }
+            .joined(separator: ", ")
+    }
+    
+    var demographicsString: String {
+        demographics
+            .map{ "\($0.demographic)" }
+            .joined(separator: ", ")
+    }
 
     var puntuation: String {
         return "\(self.score ?? 0.0)"
+    }
+    
+    var chaptersString: String {
+        guard let chapters else { return "-" }
+        return "\(chapters)"
+    }
+    
+    var volumesString: String {
+        guard let volumes else { return "-" }
+        return "\(volumes)"
+    }
+}
+
+extension Author {
+    var fullName: String {
+        "\(self.firstName) \(self.lastName)"
     }
 }
