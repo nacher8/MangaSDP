@@ -16,49 +16,57 @@ struct MangaView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(mangas) { manga in
-                    NavigationLink(value: manga) {
-                        MangaRow(manga: manga)
-                    }
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-                }
-                if mangas.count < totalMangas {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-                    .onAppear {
-                        let modelContainer = DataContainer(modelContainer: context.container)
-                        Task {
-                            do {
-                                try await modelContainer.loadNextPage()
-                            } catch {
-                                print(error)
+            ZStack {
+                Color.orange.opacity(0.15)
+                    .ignoresSafeArea()
+                
+                if mangas.isEmpty {
+                    ProgressView()
+                } else {
+                    List {
+                        ForEach(mangas) { manga in
+                            NavigationLink(value: manga) {
+                                MangaRow(manga: manga)
+                            }
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                        }
+                        if mangas.count < totalMangas {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                            .onAppear {
+                                let modelContainer = DataContainer(modelContainer: context.container)
+                                Task {
+                                    do {
+                                        try await modelContainer.loadNextPage()
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
                             }
                         }
                     }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .navigationTitle("Saotome Manga")
+                    .navigationDestination(for: MangaItem.self) { manga in
+                        MangaDetailView(manga: manga)
+                    }
                 }
             }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-            .background(Color.orange.opacity(0.15))
-            .navigationTitle("Saotome Manga")
-            .navigationDestination(for: MangaItem.self) { manga in
-                MangaDetailView(manga: manga)
-            }
-        }
-        .refreshable {
-            let modelContainer = DataContainer(modelContainer: context.container)
-            Task {
-                do {
-                    try await modelContainer.refreshAll()
-                } catch {
-                    print(error)
+            .refreshable {
+                let modelContainer = DataContainer(modelContainer: context.container)
+                Task {
+                    do {
+                        try await modelContainer.refreshAll()
+                    } catch {
+                        print(error)
+                    }
                 }
             }
         }

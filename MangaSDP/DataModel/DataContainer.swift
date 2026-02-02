@@ -38,7 +38,7 @@ actor DataContainer {
                 mangaItem.title = manga.title
                 mangaItem.titleJapanese = manga.titleJapanese
                 mangaItem.titleEnglish = manga.titleEnglish
-                mangaItem.sypnosis = manga.sypnosis
+                mangaItem.sypnosis = manga.sypnosis?.removingSquareBracketContent
                 mangaItem.background = manga.background
                 mangaItem.startDate = manga.startDate
                 mangaItem.endDate = manga.endDate
@@ -46,14 +46,14 @@ actor DataContainer {
                 mangaItem.chapters = manga.chapters
                 mangaItem.status = manga.status.flatMap(MangaStatus.init(rawValue:))
                 mangaItem.score = manga.score
-                mangaItem.url = manga.url
-                mangaItem.mainPicture = manga.mainPicture
+                mangaItem.url = manga.url.flatMap(URL.init(string:))
+                mangaItem.mainPicture = manga.mainPicture.flatMap(URL.init(string:))
             } else {
                 mangaItem = MangaItem(id: manga.id,
                                       title: manga.title ?? "",
                                       titleJapanese: manga.titleJapanese ?? "",
                                       titleEnglish: manga.titleEnglish ?? "",
-                                      sypnosis: manga.sypnosis ?? "",
+                                      sypnosis: manga.sypnosis?.removingSquareBracketContent ?? "",
                                       background: manga.background ?? "",
                                       startDate: manga.startDate ?? "",
                                       endDate: manga.endDate ?? "",
@@ -61,8 +61,8 @@ actor DataContainer {
                                       chapters: manga.chapters ?? 0,
                                       status: manga.status.flatMap(MangaStatus.init(rawValue:)),
                                       score: manga.score ?? 0.0,
-                                      url: manga.url ?? "",
-                                      mainPicture: manga.mainPicture ?? "")
+                                      url: manga.url.flatMap(URL.init(string:)),
+                                      mainPicture: manga.mainPicture.flatMap(URL.init(string:)))
                 modelContext.insert(mangaItem)
             }
 
