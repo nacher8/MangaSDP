@@ -13,16 +13,27 @@ final class MangaUser {
     @Attribute(.unique) var id: Int
     var ownedVolumes: Int
     var currentVolume: Int
-    var isCompleted: Bool
     
     @Relationship(deleteRule: .nullify)
     var manga: MangaItem
     
-    init(id: Int, ownedVolumes: Int = 0, currentVolume: Int = 0, isCompleted: Bool = false, manga: MangaItem) {
+    init(id: Int, ownedVolumes: Int = 0, currentVolume: Int = 0, manga: MangaItem) {
         self.id = id
         self.ownedVolumes = ownedVolumes
         self.currentVolume = currentVolume
-        self.isCompleted = isCompleted
         self.manga = manga
     }
+}
+
+extension MangaUser {
+    var isCompleted: Bool {
+        guard let volumes = manga.volumes else { return false }
+        return ownedVolumes >= volumes
+    }
+
+    @MainActor
+    static let mangaUser = MangaUser(id: 1,
+                                     ownedVolumes: 5,
+                                     currentVolume: 2,
+                                     manga: .manga)
 }

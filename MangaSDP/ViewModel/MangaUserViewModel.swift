@@ -59,4 +59,9 @@ final class MangaUserViewModel {
         let fetch = FetchDescriptor<MangaUser>()
         return (try? context.fetchCount(fetch)) ?? 0
     }
+    
+    func saveUserCollection() {
+        guard let context = modelContext else { return }
+        try? context.save()
+    }
 }
