@@ -33,7 +33,7 @@ struct MainTabView: View {
                 
             }
             Tab("User", systemImage: "person") {
-                
+                MangaUserView()
             }
         }
         .task {

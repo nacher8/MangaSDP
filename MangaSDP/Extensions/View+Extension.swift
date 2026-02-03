@@ -9,8 +9,7 @@ import SwiftUI
 
 extension View {
     @ViewBuilder
-    func mangaImageFrame(_ isDetail: Bool) -> some View {
-        self
-            .frame(width: isDetail ? 160 : 90, height: isDetail ? 260 : 150)
+    func mangaImageFrame(_ size: MangaImageSize) -> some View {
+        frame(width: size.frame.width, height: size.frame.height)
     }
 }

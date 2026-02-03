@@ -17,7 +17,7 @@ struct MangaDetailView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                MangaImageView(mainPicture: manga.mainPicture, isDetail: true)
+                MangaImageView(mainPicture: manga.mainPicture, size: .detail)
 
                 VStack {
                     Text(manga.title ?? "")

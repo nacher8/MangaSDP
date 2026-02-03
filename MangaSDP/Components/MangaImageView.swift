@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MangaImageView: View {
     let mainPicture: URL?
-    var isDetail: Bool = false
+    var size: MangaImageSize = .list
 
     var body: some View {
         VStack {
@@ -17,12 +17,12 @@ struct MangaImageView: View {
                 switch phase {
                 case .empty:
                     ProgressView()
-                        .mangaImageFrame(isDetail)
+                        .mangaImageFrame(size)
                 case .success(let image):
                     image
                         .resizable()
                         .scaledToFill()
-                        .mangaImageFrame(isDetail)
+                        .mangaImageFrame(size)
                         .clipShape(RoundedRectangle(cornerRadius: 11))
                 case .failure:
                     placeholder
@@ -42,7 +42,7 @@ struct MangaImageView: View {
                 .font(.largeTitle)
                 .foregroundStyle(.secondary)
         }
-        .mangaImageFrame(isDetail)
+        .mangaImageFrame(size)
     }
 }
 
