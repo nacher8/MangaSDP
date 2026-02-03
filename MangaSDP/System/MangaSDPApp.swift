@@ -10,11 +10,15 @@ import SwiftData
 
 @main
 struct MangaSDPApp: App {
+    @State private var mangaUserVM = MangaUserViewModel()
+    
     var body: some Scene {
         WindowGroup {
             MainTabView()
+                .environment(mangaUserVM)
         }
         .modelContainer(for: [MangaItem.self,
+                              MangaUser.self,
                               Author.self,
                               Theme.self,
                               Demographic.self,
