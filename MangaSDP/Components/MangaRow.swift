@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MangaRow: View {
     let manga: MangaItem
+    let isUserCollection: Bool
     
     var body: some View {
         HStack(alignment: .top) {
@@ -51,7 +52,17 @@ struct MangaRow: View {
                 .font(.caption)
             }
             Spacer()
-            MangaImageView(mainPicture: manga.mainPicture)
+            ZStack(alignment: .topTrailing) {
+                MangaImageView(mainPicture: manga.mainPicture)
+                
+                if isUserCollection {
+                    Image(systemName: "books.vertical.fill")
+                        .font(.subheadline)
+                        .foregroundStyle(.yellow)
+                        .padding(6)
+                        .background(.red, in: Circle())
+                }
+            }
         }
         .frame(height: 150)
         .padding()
@@ -71,5 +82,5 @@ struct MangaRow: View {
 }
 
 #Preview {
-    MangaRow(manga: .manga)
+    MangaRow(manga: .manga, isUserCollection: true)
 }

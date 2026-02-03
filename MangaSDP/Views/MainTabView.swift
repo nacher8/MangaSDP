@@ -10,6 +10,9 @@ import SwiftUI
 @MainActor let isiPhone = UIDevice.current.userInterfaceIdiom == .phone
 
 struct MainTabView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(MangaUserViewModel.self) private var mangaUserViewModel
+    
     var body: some View {
         TabView {
             Tab("Mangas", systemImage: "book") {
@@ -32,6 +35,9 @@ struct MainTabView: View {
             Tab("User", systemImage: "person") {
                 
             }
+        }
+        .task {
+            mangaUserViewModel.setModelContext(modelContext)
         }
     }
 }

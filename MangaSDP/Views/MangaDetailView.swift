@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MangaDetailView: View {
+    @Environment(MangaUserViewModel.self) private var mangaUserVM
     let manga: MangaItem
     
     var body: some View {
@@ -87,11 +88,11 @@ struct MangaDetailView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    print("Add")
+                    mangaUserVM.toggleCollection(manga)
                 } label: {
-                    Image(systemName: "books.vertical")
+                    Image(systemName: mangaUserVM.isUserCollection(manga.id) ? "books.vertical.fill" : "books.vertical")
                 }
-
+                .tint(mangaUserVM.isUserCollection(manga.id) ? .yellow : .gray)
             }
         }
     }
