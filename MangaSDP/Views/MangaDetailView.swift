@@ -72,15 +72,17 @@ struct MangaDetailView: View {
                         LabeledInlineText(title: "Demographics:", value: manga.demographicsString)
                     }
                     
-                    Text("Sypnosis")
-                        .font(.body)
-                        .bold()
-                        .underline()
-                    
-                    Text(manga.sypnosis ?? "")
-                        .font(.subheadline)
-                        .italic()
-                        .foregroundStyle(.secondary)
+                    if manga.sypnosis != nil {
+                        Text("Sypnosis")
+                            .font(.body)
+                            .bold()
+                            .underline()
+                        
+                        Text(manga.sypnosis ?? "")
+                            .font(.subheadline)
+                            .italic()
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 .padding()
             }
