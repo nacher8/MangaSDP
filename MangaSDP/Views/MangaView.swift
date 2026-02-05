@@ -11,7 +11,7 @@ import SwiftData
 struct MangaView: View {
     @Environment(\.modelContext) private var context
     @Environment(MangaUserViewModel.self) private var mangaUserVM
-    @Query private var mangas: [MangaItem]
+    @Query(sort: [SortDescriptor(\MangaItem.score, order: .reverse)]) private var mangas: [MangaItem]
     
     @AppStorage("totalMangas") private var totalMangas: Int = 0
     

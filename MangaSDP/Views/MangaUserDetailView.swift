@@ -45,9 +45,10 @@ struct MangaUserDetailView: View {
                                 Text("\(mangaUser.ownedVolumes) / \(totalVolumes)")
                                     .foregroundStyle(.secondary)
                             }
-                            
-                            ProgressView(value: Double(mangaUser.ownedVolumes), total: Double(totalVolumes))
-                                .tint(mangaUser.isCompleted ? .green : .orange)
+                            if totalVolumes > 0 {
+                                ProgressView(value: Double(mangaUser.ownedVolumes), total: Double(totalVolumes))
+                                    .tint(mangaUser.isCompleted ? .green : .orange)
+                            }
                         }
                     }
                     
