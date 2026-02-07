@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct MangaRow: View {
+    @Environment(MangaUserViewModel.self) private var mangaUserVM
     let manga: MangaItem
-    let isUserCollection: Bool
     
     var body: some View {
         HStack(alignment: .top) {
@@ -55,7 +55,7 @@ struct MangaRow: View {
             ZStack(alignment: .topTrailing) {
                 MangaImageView(mainPicture: manga.mainPicture)
                 
-                if isUserCollection {
+                if mangaUserVM.isUserCollection(manga.id) {
                     Image(systemName: "books.vertical.fill")
                         .font(.subheadline)
                         .foregroundStyle(.yellow)
@@ -82,5 +82,6 @@ struct MangaRow: View {
 }
 
 #Preview {
-    MangaRow(manga: .manga, isUserCollection: true)
+    MangaRow(manga: .manga)
+        .environment(MangaUserViewModel())
 }

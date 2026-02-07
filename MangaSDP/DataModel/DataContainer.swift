@@ -48,6 +48,7 @@ actor DataContainer {
                 mangaItem.score = manga.score
                 mangaItem.url = manga.url.flatMap(URL.init(string:))
                 mangaItem.mainPicture = manga.mainPicture.flatMap(URL.init(string:))
+                mangaItem.isFromMainList = true
             } else {
                 mangaItem = MangaItem(id: manga.id,
                                       title: manga.title ?? "",
@@ -62,7 +63,8 @@ actor DataContainer {
                                       status: manga.status.flatMap(MangaStatus.init(rawValue:)),
                                       score: manga.score ?? 0.0,
                                       url: manga.url.flatMap(URL.init(string:)),
-                                      mainPicture: manga.mainPicture.flatMap(URL.init(string:)))
+                                      mainPicture: manga.mainPicture.flatMap(URL.init(string:)),
+                                      isFromMainList: true)
                 modelContext.insert(mangaItem)
             }
 

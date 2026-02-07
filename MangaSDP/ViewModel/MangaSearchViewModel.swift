@@ -18,53 +18,39 @@ final class MangaSearchViewModel {
     var totalMangas: Int = 0
     var isLoading: Bool = false
     
-    private var modelContext: ModelContext?
-    
-    func setModelContext(_ context: ModelContext) {
-        modelContext = context
-    }
-    
     func findManga() async {
         isLoading = true
         do {
             let response = try await network.findManga(search: search, page: page)
-
-            try await saveMangasToSwiftData(response.items)
+            
+            let newMangas = response.items.map { dto in
+                MangaItem(id: dto.id,
+                          title: dto.title ?? "",
+                          titleJapanese: dto.titleJapanese ?? "",
+                          titleEnglish: dto.titleEnglish ?? "",
+                          sypnosis: dto.sypnosis?.removingSquareBracketContent ?? "",
+                          background: dto.background ?? "",
+                          startDate: dto.startDate ?? "",
+                          endDate: dto.endDate ?? "",
+                          volumes: dto.volumes ?? 0,
+                          chapters: dto.chapters ?? 0,
+                          status: dto.status.flatMap(MangaStatus.init(rawValue:)),
+                          score: dto.score ?? 0.0,
+                          url: dto.url.flatMap(URL.init(string:)),
+                          mainPicture: dto.mainPicture.flatMap(URL.init(string:)))
+            }
+            
+            if mangaResult.isEmpty {
+                mangaResult = newMangas
+            } else {
+                mangaResult.append(contentsOf: newMangas)
+            }
             
             totalMangas = response.metadata.total
         } catch {
             print(error)
         }
         isLoading = false
-    }
-    
-    private func saveMangasToSwiftData(_ dtos: [MangaItemDTO]) async throws {
-        guard let contex = modelContext else { return }
-        
-        let container = DataContainer(modelContainer: contex.container)
-        
-        do {
-            try await container.loadMangas(mangas: dtos)
-            
-            var savedMangas: [MangaItem] = []
-            
-            for dto in dtos {
-                let mangaID = dto.id
-                let fetch = FetchDescriptor<MangaItem>(predicate: #Predicate { $0.id == mangaID })
-                if let savedManga = try? contex.fetch(fetch).first {
-                    savedMangas.append(savedManga)
-                }
-            }
-            
-            if mangaResult.isEmpty {
-                mangaResult = savedMangas
-            } else {
-                mangaResult.append(contentsOf: savedMangas)
-            }
-            
-        } catch {
-            print(error)
-        }
     }
     
     func loadNextPage() async {

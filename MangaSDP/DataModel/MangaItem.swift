@@ -25,12 +25,15 @@ final class MangaItem {
     var url: URL?
     var mainPicture: URL?
     
+    // Flag para distinguir mangas cargados desde MangaView o MangaSearchView
+    var isFromMainList: Bool = false
+    
     @Relationship(deleteRule: .cascade) var themes: [Theme] = []
     @Relationship(deleteRule: .cascade) var demographics: [Demographic] = []
     @Relationship(deleteRule: .nullify) var authors: [Author] = []
     @Relationship(deleteRule: .cascade) var genres: [Genre] = []
     
-    init(id: Int, title: String?, titleJapanese: String?, titleEnglish: String?, sypnosis: String?, background: String?, startDate: String?, endDate: String?, volumes: Int?, chapters: Int?, status: MangaStatus?, score: Double?, url: URL?, mainPicture: URL?) {
+    init(id: Int, title: String?, titleJapanese: String?, titleEnglish: String?, sypnosis: String?, background: String?, startDate: String?, endDate: String?, volumes: Int?, chapters: Int?, status: MangaStatus?, score: Double?, url: URL?, mainPicture: URL?, isFromMainList: Bool = false) {
         self.id = id
         self.title = title
         self.titleJapanese = titleJapanese
@@ -45,6 +48,7 @@ final class MangaItem {
         self.score = score
         self.url = url
         self.mainPicture = mainPicture
+        self.isFromMainList = isFromMainList
     }
 }
 
