@@ -11,7 +11,9 @@ import SwiftData
 struct MangaView: View {
     @Environment(\.modelContext) private var context
     @Environment(MangaUserViewModel.self) private var mangaUserVM
-    @Query(sort: [SortDescriptor(\MangaItem.score, order: .reverse)]) private var mangas: [MangaItem]
+    @Query(filter: #Predicate<MangaItem> { $0.isFromMainList == true },
+           sort: [SortDescriptor(\MangaItem.score, order: .reverse)])
+    private var mangas: [MangaItem]
     
     @AppStorage("totalMangas") private var totalMangas: Int = 0
     
@@ -27,7 +29,7 @@ struct MangaView: View {
                     List {
                         ForEach(mangas) { manga in
                             NavigationLink(value: manga) {
-                                MangaRow(manga: manga, isUserCollection: mangaUserVM.isUserCollection(manga.id))
+                                MangaRow(manga: manga)
                             }
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 let isUserCollection = mangaUserVM.isUserCollection(manga.id)

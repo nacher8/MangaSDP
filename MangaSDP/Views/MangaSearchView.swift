@@ -27,7 +27,7 @@ struct MangaSearchView: View {
                         List {
                             ForEach(searchVM.mangaResult) { manga in
                                 NavigationLink(value: manga) {
-                                    MangaRow(manga: manga, isUserCollection: mangaUserVM.isUserCollection(manga.id))
+                                    MangaRow(manga: manga)
                                 }
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     let isUserCollection = mangaUserVM.isUserCollection(manga.id)

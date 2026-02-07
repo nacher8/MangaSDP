@@ -46,7 +46,6 @@ struct MainTabView: View {
         })
         .task {
             mangaUserViewModel.setModelContext(modelContext)
-            mangaSearchViewModel.setModelContext(modelContext)
         }
     }
 }
