@@ -16,11 +16,45 @@ extension URL {
         let url = api.appending(path: "/list/bestMangas")
         let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
                                           URLQueryItem(name: "per", value: "10")]
+        print("url:\(url.appending(queryItems: queryItems))")
         return url.appending(queryItems: queryItems)
     }
 
-    static func findManga(search:String, page: Int) -> URL {
+    static func findManga(search: String, page: Int) -> URL {
         let url = api.appending(path: "/search/mangasContains").appending(path: search)
+        let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
+                                          URLQueryItem(name: "per", value: "10")]
+        return url.appending(queryItems: queryItems)
+    }
+    
+    static func getGenres() -> URL {
+        api.appending(path: "/list/genres")
+    }
+    
+    static func getDemographics() -> URL {
+        api.appending(path: "/list/demographics")
+    }
+    
+    static func getThemes() -> URL {
+        api.appending(path: "/list/themes")
+    }
+    
+    static func getMangaByGenre(genre: String, page: Int) -> URL {
+        let url = api.appending(path: "/list/mangaByGenre").appending(path: genre)
+        let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
+                                          URLQueryItem(name: "per", value: "10")]
+        return url.appending(queryItems: queryItems)
+    }
+    
+    static func getMangaByDemographic(demographic: String, page: Int) -> URL {
+        let url = api.appending(path: "/list/mangaByDemographic").appending(path: demographic)
+        let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
+                                          URLQueryItem(name: "per", value: "10")]
+        return url.appending(queryItems: queryItems)
+    }
+    
+    static func getMangaByTheme(theme: String, page: Int) -> URL {
+        let url = api.appending(path: "/list/mangaByTheme").appending(path: theme)
         let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
                                           URLQueryItem(name: "per", value: "10")]
         return url.appending(queryItems: queryItems)

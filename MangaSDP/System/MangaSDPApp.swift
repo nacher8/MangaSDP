@@ -12,19 +12,22 @@ import SwiftData
 struct MangaSDPApp: App {
     @State private var mangaUserVM = MangaUserViewModel()
     @State private var mangaSearchVM = MangaSearchViewModel()
+    @State private var mangaFilterVM = MangaFilterViewModel()
     
     var body: some Scene {
         WindowGroup {
             MainTabView()
                 .environment(mangaUserVM)
                 .environment(mangaSearchVM)
+                .environment(mangaFilterVM)
         }
         .modelContainer(for: [MangaItem.self,
                               MangaUser.self,
                               Author.self,
                               Theme.self,
                               Demographic.self,
-                              Genre.self]) { result in
+                              Genre.self,
+                              MangaCategories.self]) { result in
             guard case .success(let container) = result else {
                 return
             }
