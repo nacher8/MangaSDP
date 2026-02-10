@@ -15,10 +15,12 @@ actor DataContainer {
     @AppStorage("page") private var actualPage: Int = 1
     @AppStorage("totalMangas") private var totalMangas: Int = 0
     
+    // MARK: - Mangas
     func loadInitialData() async throws {
         let mangas = try await getMangas()
         updatePagination(from: mangas.metadata)
         try loadMangas(mangas: mangas.items)
+        try await loadCategories()
     }
     
     func getMangas() async throws -> Manga {
@@ -193,9 +195,47 @@ actor DataContainer {
         try modelContext.save()
         
         try await loadInitialData()
+        try await loadCategories()
     }
     
     private func updatePagination(from metadata: MetadataDTO) {
         totalMangas = metadata.total
+    }
+    
+    // MARK: - Categories
+    func loadCategories(_ refresh: Bool = false) async throws {
+        async let genres: [String] = repository.getGenres()
+        async let demographics: [String] = repository.getDemographics()
+        async let themes: [String] = repository.getThemes()
+        
+        do {
+            let (genres, demographics, themes) = try await (genres, demographics, themes)
+            
+            let fetch = FetchDescriptor<MangaCategories>()
+            if let oldCategories = try modelContext.fetch(fetch).first {
+                modelContext.delete(oldCategories)
+            }
+            
+            let newCategories = MangaCategories(
+                id: UUID().uuidString,
+                genres: genres,
+                demographics: demographics,
+                themes: themes
+            )
+            
+            modelContext.insert(newCategories)
+            
+            try modelContext.save()
+        } catch {
+            print(error)
+        }
+    }
+    
+    func getCategories() throws -> (genres: [String], demographics: [String], themes: [String])? {
+        let fetch = FetchDescriptor<MangaCategories>()
+        guard let categories = try modelContext.fetch(fetch).first else {
+            return nil
+        }
+        return (categories.genres, categories.demographics, categories.themes)
     }
 }
