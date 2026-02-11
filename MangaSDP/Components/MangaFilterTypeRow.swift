@@ -52,6 +52,20 @@ struct MangaFilterTypeRow: View {
     }
 }
 
-//#Preview {
-//    MangaFilterRowView()
-//}
+#Preview("No seleccionado") {
+    MangaFilterTypeRow(
+        filterType: .genre,
+        isSelected: false,
+        onTap: {}
+    )
+    .padding()
+}
+
+#Preview("Seleccionado") {
+    MangaFilterTypeRow(
+        filterType: .genre,
+        isSelected: true,
+        onTap: {}
+    )
+    .padding()
+}

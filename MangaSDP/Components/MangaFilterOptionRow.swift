@@ -43,6 +43,18 @@ struct MangaFilterOptionRow: View {
     }
 }
 
-//#Preview {
-//    MangaFilterOptionRow()
-//}
+#Preview("No seleccionado") {
+    MangaFilterOptionRow(
+        option: "Action",
+        isSelected: false,
+        onTap: {}
+    )
+}
+
+#Preview("Seleccionado") {
+    MangaFilterOptionRow(
+        option: "Action",
+        isSelected: true,
+        onTap: {}
+    )
+}

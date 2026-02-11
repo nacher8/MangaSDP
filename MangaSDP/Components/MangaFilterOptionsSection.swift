@@ -79,11 +79,18 @@ struct MangaFilterOptionsSection: View {
                         }
                         
                         Button(action: {
-                            mangaFilterVM.applyFilter()
-                            dismiss()
+                            Task {
+                                await mangaFilterVM.applyFilter()
+                                dismiss()
+                            }
                         }) {
                             HStack {
-                                Image(systemName: "checkmark.circle.fill")
+                                if mangaFilterVM.isLoading {
+                                    ProgressView()
+                                        .tint(.white)
+                                } else {
+                                    Image(systemName: "checkmark.circle.fill")
+                                }
                                 Text("Apply Filter")
                             }
                             .font(.subheadline)
@@ -95,6 +102,7 @@ struct MangaFilterOptionsSection: View {
                             .background(Color.green)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
+                        .disabled(mangaFilterVM.isLoading)
                     }
                 }
             }
@@ -104,6 +112,11 @@ struct MangaFilterOptionsSection: View {
     }
 }
 
-//#Preview {
-//    MangaFilterOptionsSection()
-//}
+#Preview() {
+    let filterVM = MangaFilterViewModel()
+    filterVM.genres = ["Action","Adventure","Comedy","Drama"]
+    filterVM.selectedFilter = .genre
+    
+    return MangaFilterOptionsSection(selectedFilter: .genre)
+        .environment(filterVM)
+}

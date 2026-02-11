@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @MainActor let isiPhone = UIDevice.current.userInterfaceIdiom == .phone
 
@@ -54,4 +55,16 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView()
+        .modelContainer(for: [
+            MangaItem.self,
+            MangaUser.self,
+            Author.self,
+            Theme.self,
+            Demographic.self,
+            Genre.self,
+            MangaCategories.self
+        ], inMemory: true)
+        .environment(MangaUserViewModel())
+        .environment(MangaSearchViewModel())
+        .environment(MangaFilterViewModel())
 }
