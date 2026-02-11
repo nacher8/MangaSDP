@@ -56,4 +56,5 @@ struct MangaUserView: View {
 
 #Preview {
     MangaUserView()
+        .environment(MangaUserViewModel())
 }

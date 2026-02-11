@@ -102,4 +102,5 @@ struct MangaDetailView: View {
 
 #Preview {
     MangaDetailView(manga: .manga)
+        .environment(MangaUserViewModel())
 }
