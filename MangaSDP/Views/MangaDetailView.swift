@@ -41,22 +41,24 @@ struct MangaDetailView: View {
                 .padding()
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Authors")
-                        .font(.body)
-                        .bold()
-                        .underline()
-                    
-                    ForEach(manga.authors) { author in
-                        HStack(alignment: .firstTextBaseline) {
-                            Text(author.fullName)
-                                .font(.subheadline)
-                            
-                            DottedLine()
-                            
-                            Text(author.role)
-                                .font(.subheadline)
-                                .italic()
-                                .foregroundStyle(.secondary)
+                    if manga.authors.count > 0 {
+                        Text("Authors")
+                            .font(.body)
+                            .bold()
+                            .underline()
+                        
+                        ForEach(manga.authors) { author in
+                            HStack(alignment: .firstTextBaseline) {
+                                Text(author.fullName)
+                                    .font(.subheadline)
+                                
+                                DottedLine()
+                                
+                                Text(author.role)
+                                    .font(.subheadline)
+                                    .italic()
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
                     

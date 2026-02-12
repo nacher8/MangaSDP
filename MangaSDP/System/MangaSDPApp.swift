@@ -34,9 +34,12 @@ struct MangaSDPApp: App {
             Task.detached(priority: .high) {
                 let modelContainer = DataContainer(modelContainer: container)
                 do {
-                    try await modelContainer.loadInitialData()
+                    let hasData = try await modelContainer.hasExistingData()
+                    if !hasData {
+                        try await modelContainer.loadInitialData()
+                    }
                 } catch {
-                    print(error)
+                    print("Error verificando/cargando datos: \(error)")
                 }
             }
         }
