@@ -23,6 +23,16 @@ actor DataContainer {
         try await loadCategories()
     }
     
+    func hasExistingData() throws -> Bool {
+        let mangaFetch = FetchDescriptor<MangaItem>()
+        let mangaCount = try modelContext.fetchCount(mangaFetch)
+        
+        let categoriesFetch = FetchDescriptor<MangaCategories>()
+        let categoriesCount = try modelContext.fetchCount(categoriesFetch)
+        
+        return mangaCount > 0 && categoriesCount > 0
+    }
+    
     func getMangas() async throws -> Manga {
         async let getMangas = repository.getMangas(page: actualPage)
         return try await getMangas
