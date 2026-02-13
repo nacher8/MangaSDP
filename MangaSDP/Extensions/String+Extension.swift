@@ -21,4 +21,17 @@ extension String {
         )
         .trimmingCharacters(in: .whitespacesAndNewlines)
     }
+    
+    var roleIcon: String {
+        switch self.lowercased() {
+        case "story":
+            return "story"
+        case "art":
+            return "art"
+        case "story & art":
+            return "storyAndArt"
+        default:
+            return "noData"
+        }
+    }
 }

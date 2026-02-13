@@ -29,7 +29,7 @@ struct MainTabView: View {
             }
             Tab("Authors", systemImage: "long.text.page.and.pencil.fill", value: 1) {
                 if isiPhone {
-                    
+                    MangaAuthorsView()
                 } else {
                     
                 }

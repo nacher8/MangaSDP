@@ -15,6 +15,9 @@ actor DataContainer {
     @AppStorage("page") private var actualPage: Int = 1
     @AppStorage("totalMangas") private var totalMangas: Int = 0
     
+    @AppStorage("pageAuthors") private var actualPageAuthors: Int = 1
+    @AppStorage("totalAuthors") private var totalAuthors: Int = 0
+    
     // MARK: - Mangas
     func loadInitialData() async throws {
         let mangas = try await getMangas()
@@ -33,7 +36,7 @@ actor DataContainer {
         return mangaCount > 0 && categoriesCount > 0
     }
     
-    func getMangas() async throws -> Manga {
+    func getMangas() async throws -> MangaDTO {
         async let getMangas = repository.getMangas(page: actualPage)
         return try await getMangas
     }
@@ -91,7 +94,18 @@ actor DataContainer {
         }
     }
     
+    // Carga autores asociados a mangas (no marca isFromAuthorsList)
     func loadAuthors(_ authorsDTO: [AuthorDTO]) throws -> [Author] {
+        return try loadAuthorsInternal(authorsDTO, isFromAuthorsList: false)
+    }
+    
+    // Carga autores desde la lista completa de autores (marca isFromAuthorsList)
+    private func loadAuthorsForList(_ authorsDTO: [AuthorDTO]) throws -> [Author] {
+        return try loadAuthorsInternal(authorsDTO, isFromAuthorsList: true)
+    }
+    
+    // Función interna que carga autores con el flag apropiado
+    private func loadAuthorsInternal(_ authorsDTO: [AuthorDTO], isFromAuthorsList: Bool) throws -> [Author] {
         var authors: [Author] = []
         
         for authorDTO in authorsDTO {
@@ -102,12 +116,22 @@ actor DataContainer {
             
             let author: Author
             if let existingAuthor = queryAuthor.first {
+                // Actualizar datos del autor existente
+                existingAuthor.firstName = authorDTO.firstName
+                existingAuthor.lastName = authorDTO.lastName
+                existingAuthor.role = authorDTO.role
+                // Si se carga desde la lista, marcar el flag (pero no quitarlo si ya lo tiene)
+                if isFromAuthorsList {
+                    existingAuthor.isFromAuthorsList = true
+                }
                 author = existingAuthor
             } else {
+                // Crear nuevo autor
                 author = Author(id: authorDTO.id,
                                 firstName: authorDTO.firstName,
                                 lastName: authorDTO.lastName,
-                                role: authorDTO.role)
+                                role: authorDTO.role,
+                                isFromAuthorsList: isFromAuthorsList)
                 modelContext.insert(author)
             }
             authors.append(author)
@@ -195,17 +219,45 @@ actor DataContainer {
     func refreshAll() async throws {
         actualPage = 1
         
-        let fetch = FetchDescriptor<MangaItem>()
+        let userMangasFetch = FetchDescriptor<MangaUser>()
+        let userMangas = try modelContext.fetch(userMangasFetch)
+        let userMangaIDs = Set(userMangas.map { $0.manga.id })
+        
+        let fetch = FetchDescriptor<MangaItem>(
+            predicate: #Predicate<MangaItem> { 
+                $0.isFromMainList == true 
+            }
+        )
         let allMangas = try modelContext.fetch(fetch)
         
+        var deletedCount = 0
         for manga in allMangas {
-            modelContext.delete(manga)
+            if !userMangaIDs.contains(manga.id) {
+                modelContext.delete(manga)
+                deletedCount += 1
+            } else {
+                manga.isFromMainList = false
+            }
         }
         
         try modelContext.save()
         
         try await loadInitialData()
         try await loadCategories()
+        
+        for mangaID in userMangaIDs {
+            var fetchManga = FetchDescriptor<MangaItem>(
+                predicate: #Predicate { $0.id == mangaID }
+            )
+            fetchManga.fetchLimit = 1
+            if let manga = try modelContext.fetch(fetchManga).first {
+                manga.isFromMainList = true
+            }
+        }
+        
+        if modelContext.hasChanges {
+            try modelContext.save()
+        }
     }
     
     private func updatePagination(from metadata: MetadataDTO) {
@@ -247,5 +299,85 @@ actor DataContainer {
             return nil
         }
         return (categories.genres, categories.demographics, categories.themes)
+    }
+    
+    // MARK: - Authors
+    func hasExistingAuthorsData() throws -> Bool {
+        let authorFetch = FetchDescriptor<Author>(
+            predicate: #Predicate<Author> { $0.isFromAuthorsList == true }
+        )
+        let authorCount = try modelContext.fetchCount(authorFetch)
+        return authorCount > 0
+    }
+    
+    func loadInitialDataAuthors() async throws {
+        let authors = try await getAuthors()
+        updatePaginationAuthors(from: authors.metadata)
+        _ = try loadAuthorsForList(authors.items)
+        
+        if modelContext.hasChanges {
+            try modelContext.save()
+        }
+    }
+    
+    func getAuthors() async throws -> AuthorPageDTO {
+        async let getAuthors = repository.getAuthors(page: actualPageAuthors)
+        return try await getAuthors
+    }
+    
+    func loadNextPageAuthors() async throws {
+        actualPageAuthors += 1
+        let authors = try await repository.getAuthors(page: actualPageAuthors)
+        updatePaginationAuthors(from: authors.metadata)
+        _ = try loadAuthorsForList(authors.items)
+        
+        if modelContext.hasChanges {
+            try modelContext.save()
+        }
+    }
+    
+    func refreshAllAuthors() async throws {
+            actualPageAuthors = 1
+            
+            let fetch = FetchDescriptor<Author>()
+            let allAuthors = try modelContext.fetch(fetch)
+            
+            for author in allAuthors {
+                author.isFromAuthorsList = false
+            }
+            
+            if modelContext.hasChanges {
+                try modelContext.save()
+            }
+            
+            do {
+                let authors = try await getAuthors()
+                updatePaginationAuthors(from: authors.metadata)
+                _ = try loadAuthorsForList(authors.items)
+                
+                if modelContext.hasChanges {
+                    try modelContext.save()
+                }
+            } catch {
+                print("Error recargando autores: \(error)")
+                throw error
+            }
+
+            let fetchAfter = FetchDescriptor<Author>(predicate: #Predicate<Author> {
+                $0.isFromAuthorsList == false && $0.mangas.isEmpty
+            })
+            let authorsToDelete = try modelContext.fetch(fetchAfter)
+            
+            for author in authorsToDelete {
+                modelContext.delete(author)
+            }
+            
+            if modelContext.hasChanges {
+                try modelContext.save()
+            }
+        }
+    
+    private func updatePaginationAuthors(from metadata: MetadataDTO) {
+        totalAuthors = metadata.total
     }
 }

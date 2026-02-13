@@ -34,9 +34,15 @@ struct MangaSDPApp: App {
             Task.detached(priority: .high) {
                 let modelContainer = DataContainer(modelContainer: container)
                 do {
+                    // Verificar y cargar datos de mangas
                     let hasData = try await modelContainer.hasExistingData()
                     if !hasData {
                         try await modelContainer.loadInitialData()
+                    }
+                    // Verificar y cargar lista completa de autores
+                    let hasDataAuthors = try await modelContainer.hasExistingAuthorsData()
+                    if !hasDataAuthors {
+                        try await modelContainer.loadInitialDataAuthors()
                     }
                 } catch {
                     print("Error verificando/cargando datos: \(error)")

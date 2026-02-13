@@ -28,7 +28,7 @@ struct MangaView: View {
                 if mangaFilterVM.isApplyFilter {
                     MangaListFilteredView()
                 } else if mangas.isEmpty {
-                    ProgressView()
+                    ProgressView() // mirar para meter contentUnailable
                 } else {
                     MangaListMainView(mangas: mangas,
                                       totalMangas: totalMangas,

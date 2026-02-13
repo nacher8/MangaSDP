@@ -14,8 +14,8 @@ final class MangaUser {
     var ownedVolumes: Int
     var currentVolume: Int
     
-    @Relationship(deleteRule: .nullify)
-    var manga: MangaItem
+    // Cambiar a .cascade con inversa para mantener integridad
+    @Relationship(deleteRule: .nullify, inverse: \MangaItem.userCollections)vvar manga: MangaItem
     
     init(id: Int, ownedVolumes: Int = 0, currentVolume: Int = 0, manga: MangaItem) {
         self.id = id

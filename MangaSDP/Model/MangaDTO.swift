@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Manga: Codable {
+struct MangaDTO: Codable {
     let items: [MangaItemDTO]
     let metadata: MetadataDTO
 }
