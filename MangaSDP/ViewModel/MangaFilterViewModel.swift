@@ -77,7 +77,7 @@ final class MangaFilterViewModel {
         mangaResult = []
         
         do {
-            let response: Manga
+            let response: MangaDTO
             
             switch filter {
             case .genre:
@@ -109,7 +109,7 @@ final class MangaFilterViewModel {
         page += 1
         
         do {
-            let response: Manga
+            let response: MangaDTO
             
             switch filter {
             case .genre:

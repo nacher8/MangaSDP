@@ -59,4 +59,12 @@ extension URL {
                                           URLQueryItem(name: "per", value: "10")]
         return url.appending(queryItems: queryItems)
     }
+    
+    static func getAuthors(page: Int) -> URL {
+        let url = api.appending(path: "/list/authorsPaged")
+        let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
+                                          URLQueryItem(name: "per", value: "10")]
+        print("url:\(url.appending(queryItems: queryItems))")
+        return url.appending(queryItems: queryItems)
+    }
 }

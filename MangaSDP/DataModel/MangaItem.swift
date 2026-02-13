@@ -33,6 +33,9 @@ final class MangaItem {
     @Relationship(deleteRule: .nullify) var authors: [Author] = []
     @Relationship(deleteRule: .cascade) var genres: [Genre] = []
     
+    // Relación inversa con MangaUser para proteger mangas en colección
+    @Relationship(deleteRule: .nullify) var userCollections: [MangaUser] = []
+    
     init(id: Int, title: String?, titleJapanese: String?, titleEnglish: String?, sypnosis: String?, background: String?, startDate: String?, endDate: String?, volumes: Int?, chapters: Int?, status: MangaStatus?, score: Double?, url: URL?, mainPicture: URL?, isFromMainList: Bool = false) {
         self.id = id
         self.title = title
@@ -59,13 +62,17 @@ final class Author {
     var lastName: String
     var role: String
     
+    // Flag para distinguir autores cargados desde la lista completa
+    var isFromAuthorsList: Bool = false
+    
     @Relationship(deleteRule: .nullify, inverse: \MangaItem.authors) var mangas: [MangaItem]
     
-    init(id: String, firstName: String, lastName: String, role: String) {
+    init(id: String, firstName: String, lastName: String, role: String, isFromAuthorsList: Bool = false) {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
         self.role = role
+        self.isFromAuthorsList = isFromAuthorsList
         self.mangas = []
     }
 }
@@ -194,4 +201,10 @@ extension Author {
     var fullName: String {
         "\(self.firstName) \(self.lastName)"
     }
+    
+    @MainActor
+    static let author = Author(id: "1234",
+                               firstName: "Prueba",
+                               lastName: "Preview",
+                               role: "Dibujante")
 }
