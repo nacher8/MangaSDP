@@ -52,7 +52,7 @@ struct MangaListFilteredView: View {
                         .listRowBackground(Color.clear)
                         .onAppear {
                             Task {
-                                await mangaFilterVM.loadNextPage()
+                                try await mangaFilterVM.loadNextPage()
                             }
                         }
                     }

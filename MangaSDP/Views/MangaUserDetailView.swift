@@ -13,6 +13,19 @@ struct MangaUserDetailView: View {
     @Bindable var mangaUser: MangaUser
     
     var body: some View {
+        if let manga = mangaUser.manga {
+            detailView(for: manga)
+        } else {
+            ContentUnavailableView(
+                "Manga not available",
+                systemImage: "exclamationmark.triangle",
+                description: Text("This manga does not exist in the database.")
+            )
+        }
+    }
+    
+    @ViewBuilder
+    private func detailView(for manga: MangaItem) -> some View {
         ZStack {
             Color.orange.opacity(0.15)
                 .ignoresSafeArea()
@@ -20,15 +33,15 @@ struct MangaUserDetailView: View {
             Form {
                 Section {
                     VStack(spacing: 12) {
-                        MangaImageView(mainPicture: mangaUser.manga.mainPicture, size: .list)
+                        MangaImageView(mainPicture: manga.mainPicture, size: .list)
                             .frame(maxWidth: .infinity)
                         
-                        Text(mangaUser.manga.title ?? "")
+                        Text(manga.title ?? "")
                             .font(.title2)
                             .bold()
                             .multilineTextAlignment(.center)
 
-                        Text(mangaUser.manga.titleJapanese ?? "")
+                        Text(manga.titleJapanese ?? "")
                             .font(.title3)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
@@ -37,7 +50,7 @@ struct MangaUserDetailView: View {
                 .listRowBackground(Color.clear)
                 
                 Section("Progress") {
-                    if let totalVolumes = mangaUser.manga.volumes {
+                    if let totalVolumes = manga.volumes {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text("Collection Progress")
@@ -61,7 +74,7 @@ struct MangaUserDetailView: View {
                 Section("Owned Volumes") {
                     Stepper(
                         value: $mangaUser.ownedVolumes,
-                        in: 0...(mangaUser.manga.volumes ?? 999),
+                        in: 0...(manga.volumes ?? 999),
                         step: 1
                     ) {
                         HStack {
@@ -102,10 +115,10 @@ struct MangaUserDetailView: View {
                 }
                 
                 Section("Manga Information") {
-                    LabeledContent("Status", value: mangaUser.manga.status?.displayName ?? "Unknown")
+                    LabeledContent("Status", value: manga.status?.displayName ?? "Unknown")
                     LabeledContent {
                         HStack {
-                            Text(mangaUser.manga.puntuation)
+                            Text(manga.puntuation)
                             Image(systemName: "star.fill")
                                 .foregroundStyle(.yellow)
                         }
@@ -113,11 +126,11 @@ struct MangaUserDetailView: View {
                         Text("Score")
                     }
                     
-                    if let totalVolumes = mangaUser.manga.volumes {
+                    if let totalVolumes = manga.volumes {
                         LabeledContent("Total Volumes", value: "\(totalVolumes)")
                     }
                     
-                    if let chapters = mangaUser.manga.chapters {
+                    if let chapters = manga.chapters {
                         LabeledContent("Total Chapters", value: "\(chapters)")
                     }
                 }

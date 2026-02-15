@@ -54,7 +54,7 @@ struct MangaSearchView: View {
                                 .onAppear {
                                     Task {
                                         do {
-                                            await searchVM.loadNextPage()
+                                            try await searchVM.loadNextPage()
                                         }
                                     }
                                 }
@@ -78,7 +78,7 @@ struct MangaSearchView: View {
                     searchVM.page = 1
                     searchVM.mangaResult.removeAll()
                     Task {
-                        await searchVM.findManga()
+                        try await searchVM.findManga()
                     }
                 }
             }

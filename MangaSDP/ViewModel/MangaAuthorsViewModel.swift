@@ -1,16 +1,15 @@
 //
-//  MangaSearchViewModel.swift
+//  MangaAuthorsViewModel.swift
 //  MangaSDP
 //
-//  Created by IGNACIO HERNAIZ IZQUIERDO on 4/2/26.
+//  Created by IGNACIO HERNAIZ IZQUIERDO on 13/2/26.
 //
 
 import Foundation
 import SwiftData
 
 @Observable @MainActor
-final class MangaSearchViewModel {
-    var search = ""
+final class MangaAuthorsViewModel {
     var page = 1
     let network = Network()
     
@@ -18,12 +17,12 @@ final class MangaSearchViewModel {
     var totalMangas: Int = 0
     var isLoading: Bool = false
     
-    func findManga() async throws {
+    func getMangasAuthor(id: String) async throws {
         isLoading = true
         
         let response: MangaDTO
         do {
-            response = try await network.findManga(search: search, page: page)
+            response = try await network.getMangasAuthor(id: id, page: page)
         } catch {
             print("Error en llamada API: \(error)")
             isLoading = false
@@ -42,18 +41,18 @@ final class MangaSearchViewModel {
         isLoading = false
     }
     
-    func loadNextPage() async throws {
+    func loadNextPage(id: String) async throws {
         guard !isLoading else { return }
         guard mangaResult.count < totalMangas else { return }
         
         page += 1
-        try await findManga()
+        
+        try await getMangasAuthor(id: id)
     }
     
-    func reset() {
-        search = ""
-        page = 1
+    func resetData() {
         mangaResult = []
         totalMangas = 0
+        page = 1
     }
 }

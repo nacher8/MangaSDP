@@ -15,8 +15,6 @@ struct MangaAuthorsView: View {
     
     @AppStorage("totalAuthors") private var totalAuthors: Int = 0
     
-    let flexibleItems: [GridItem] = [GridItem(.flexible()), GridItem(.flexible())]
-    
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -73,6 +71,9 @@ struct MangaAuthorsView: View {
                     .scrollContentBackground(.hidden)
                 }
                 .navigationTitle("Authors")
+                .navigationDestination(for: Author.self) { author in
+                    MangaAuthorsDetailView(author: author)
+                }
                 .refreshable {
                     let modelContainer = DataContainer(modelContainer: context.container)
                     do {
