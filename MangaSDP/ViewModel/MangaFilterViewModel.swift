@@ -68,17 +68,14 @@ final class MangaFilterViewModel {
         return selectedOption == option
     }
     
-    func applyFilter() async {
+    func applyFilter() async throws {
         guard let filter = selectedFilter,
               let option = selectedOption else { return }
         
         isLoading = true
-        page = 1
-        mangaResult = []
         
+        let response: MangaDTO
         do {
-            let response: MangaDTO
-            
             switch filter {
             case .genre:
                 response = try await network.getMangaByGenre(genre: option, page: page)
@@ -87,47 +84,31 @@ final class MangaFilterViewModel {
             case .theme:
                 response = try await network.getMangasByTheme(theme: option, page: page)
             }
-            
-            mangaResult = mapDTOsToMangaItems(response.items)
-            totalMangas = response.metadata.total
-            isApplyFilter = true
-            
         } catch {
-            print("Error applying filter: \(error)")
+            print("Error en llamada API: \(error)")
+            isLoading = false
+            return
         }
+
+        let newMangas = Utils.mapDTOsToMangaItems(response.items)
         
+        if page == 1 {
+            mangaResult = newMangas
+        } else {
+            mangaResult.append(contentsOf: newMangas)
+        }
+        totalMangas = response.metadata.total
+        isApplyFilter = true
         isLoading = false
     }
     
-    func loadNextPage() async {
+    func loadNextPage() async throws {
         guard !isLoading else { return }
         guard mangaResult.count < totalMangas else { return }
-        guard let filter = selectedFilter,
-              let option = selectedOption else { return }
         
-        isLoading = true
         page += 1
         
-        do {
-            let response: MangaDTO
-            
-            switch filter {
-            case .genre:
-                response = try await network.getMangaByGenre(genre: option, page: page)
-            case .demographic:
-                response = try await network.getMangasByDemographic(demographic: option, page: page)
-            case .theme:
-                response = try await network.getMangasByTheme(theme: option, page: page)
-            }
-            
-            let newMangas = mapDTOsToMangaItems(response.items)
-            mangaResult.append(contentsOf: newMangas)
-            
-        } catch {
-            print("Error loading next page: \(error)")
-        }
-        
-        isLoading = false
+        try await applyFilter()
     }
     
     func clearFilter() {
@@ -144,47 +125,5 @@ final class MangaFilterViewModel {
             selectedOption = nil
         }
         selectedFilter = newType
-    }
-    
-    private func mapDTOsToMangaItems(_ dtos: [MangaItemDTO]) -> [MangaItem] {
-        dtos.map { dto in
-            let mangaItem = MangaItem(id: dto.id,
-                                      title: dto.title ?? "",
-                                      titleJapanese: dto.titleJapanese ?? "",
-                                      titleEnglish: dto.titleEnglish ?? "",
-                                      sypnosis: dto.sypnosis?.removingSquareBracketContent ?? "",
-                                      background: dto.background ?? "",
-                                      startDate: dto.startDate ?? "",
-                                      endDate: dto.endDate ?? "",
-                                      volumes: dto.volumes ?? 0,
-                                      chapters: dto.chapters ?? 0,
-                                      status: dto.status.flatMap(MangaStatus.init(rawValue:)),
-                                      score: dto.score ?? 0.0,
-                                      url: dto.url.flatMap(URL.init(string:)),
-                                      mainPicture: dto.mainPicture.flatMap(URL.init(string:)),
-                                      isFromMainList: false)
-            
-            // Crear las relaciones (sin insertar en SwiftData)
-            mangaItem.genres = dto.genres.map { genreDTO in
-                Genre(id: genreDTO.id, genre: genreDTO.genre)
-            }
-            
-            mangaItem.themes = dto.themes.map { themeDTO in
-                Theme(id: themeDTO.id, theme: themeDTO.theme)
-            }
-            
-            mangaItem.demographics = dto.demographics.map { demographicDTO in
-                Demographic(id: demographicDTO.id, demographic: demographicDTO.demographic)
-            }
-            
-            mangaItem.authors = dto.authors.map { authorDTO in
-                Author(id: authorDTO.id,
-                       firstName: authorDTO.firstName,
-                       lastName: authorDTO.lastName,
-                       role: authorDTO.role)
-            }
-            
-            return mangaItem
-        }
     }
 }

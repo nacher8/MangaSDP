@@ -94,17 +94,17 @@ actor DataContainer {
         }
     }
     
-    // Carga autores asociados a mangas (no marca isFromAuthorsList)
+    /// Carga autores asociados a mangas (no marca isFromAuthorsList)
     func loadAuthors(_ authorsDTO: [AuthorDTO]) throws -> [Author] {
         return try loadAuthorsInternal(authorsDTO, isFromAuthorsList: false)
     }
     
-    // Carga autores desde la lista completa de autores (marca isFromAuthorsList)
+    /// Carga autores desde la lista completa de autores (marca isFromAuthorsList)
     private func loadAuthorsForList(_ authorsDTO: [AuthorDTO]) throws -> [Author] {
         return try loadAuthorsInternal(authorsDTO, isFromAuthorsList: true)
     }
     
-    // Función interna que carga autores con el flag apropiado
+    /// Función interna que carga autores con el flag apropiado
     private func loadAuthorsInternal(_ authorsDTO: [AuthorDTO], isFromAuthorsList: Bool) throws -> [Author] {
         var authors: [Author] = []
         
@@ -221,7 +221,7 @@ actor DataContainer {
         
         let userMangasFetch = FetchDescriptor<MangaUser>()
         let userMangas = try modelContext.fetch(userMangasFetch)
-        let userMangaIDs = Set(userMangas.map { $0.manga.id })
+        let userMangaIDs = Set(userMangas.compactMap { $0.manga?.id })
         
         let fetch = FetchDescriptor<MangaItem>(
             predicate: #Predicate<MangaItem> { 

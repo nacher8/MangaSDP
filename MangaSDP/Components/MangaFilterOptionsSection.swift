@@ -80,7 +80,7 @@ struct MangaFilterOptionsSection: View {
                         
                         Button(action: {
                             Task {
-                                await mangaFilterVM.applyFilter()
+                                try await mangaFilterVM.applyFilter()
                                 dismiss()
                             }
                         }) {

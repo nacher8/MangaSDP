@@ -14,8 +14,8 @@ final class MangaUser {
     var ownedVolumes: Int
     var currentVolume: Int
     
-    // Cambiar a .cascade con inversa para mantener integridad
-    @Relationship(deleteRule: .nullify, inverse: \MangaItem.userCollections)vvar manga: MangaItem
+    // Relación OPCIONAL para resolver conflicto con unique constraint
+    @Relationship(deleteRule: .nullify, inverse: \MangaItem.userCollections) var manga: MangaItem?
     
     init(id: Int, ownedVolumes: Int = 0, currentVolume: Int = 0, manga: MangaItem) {
         self.id = id
@@ -27,7 +27,8 @@ final class MangaUser {
 
 extension MangaUser {
     var isCompleted: Bool {
-        guard let volumes = manga.volumes else { return false }
+        guard let manga = manga,
+              let volumes = manga.volumes else { return false }
         return ownedVolumes >= volumes
     }
 

@@ -25,21 +25,23 @@ struct MangaUserView: View {
                 } else {
                     List {
                         ForEach(mangas) { mangaUser in
-                            NavigationLink(value: mangaUser) {
-                                MangaUserRow(mangaUser: mangaUser)
-                            }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                let isUserCollection = mangaUserVM.isUserCollection(mangaUser.manga.id)
-                                Button {
-                                    mangaUserVM.toggleCollection(mangaUser.manga)
-                                } label: {
-                                    Label(isUserCollection ? "Delete" : "Add",
-                                          systemImage: "books.vertical")
+                            if let manga = mangaUser.manga {
+                                NavigationLink(value: mangaUser) {
+                                    MangaUserRow(mangaUser: mangaUser)
                                 }
-                                .tint(isUserCollection ? .gray : .yellow)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    let isUserCollection = mangaUserVM.isUserCollection(manga.id)
+                                    Button {
+                                        mangaUserVM.toggleCollection(manga)
+                                    } label: {
+                                        Label(isUserCollection ? "Delete" : "Add",
+                                              systemImage: "books.vertical")
+                                    }
+                                    .tint(isUserCollection ? .gray : .yellow)
+                                }
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Color.clear)
                             }
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(Color.clear)
                         }
                     }
                     .listStyle(.plain)

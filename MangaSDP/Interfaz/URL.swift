@@ -24,6 +24,7 @@ extension URL {
         let url = api.appending(path: "/search/mangasContains").appending(path: search)
         let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
                                           URLQueryItem(name: "per", value: "10")]
+        print("url:\(url.appending(queryItems: queryItems))")
         return url.appending(queryItems: queryItems)
     }
     
@@ -62,6 +63,14 @@ extension URL {
     
     static func getAuthors(page: Int) -> URL {
         let url = api.appending(path: "/list/authorsPaged")
+        let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
+                                          URLQueryItem(name: "per", value: "10")]
+        print("url:\(url.appending(queryItems: queryItems))")
+        return url.appending(queryItems: queryItems)
+    }
+    
+    static func getMangasAuthor(id: String, page: Int) -> URL {
+        let url = api.appending(path: "/list/mangaByAuthor").appending(path: id)
         let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
                                           URLQueryItem(name: "per", value: "10")]
         print("url:\(url.appending(queryItems: queryItems))")

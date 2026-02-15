@@ -37,7 +37,11 @@ struct MangaView: View {
             }
             .refreshable {
                 if mangaFilterVM.isApplyFilter {
-                    await mangaFilterVM.applyFilter()
+                    do {
+                        try await mangaFilterVM.applyFilter()
+                    } catch {
+                        print("Error refreshing: \(error)")
+                    }
                 } else {
                     let modelContainer = DataContainer(modelContainer: context.container)
                     Task {
