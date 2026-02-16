@@ -203,6 +203,7 @@ struct MangaSearchAdvanceView: View {
                         }
                         .disabled(!mangaSearchAdvanceVM.isSearchValid)
                         .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.roundedRectangle(radius: 12))
                         .tint(.yellow)
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))

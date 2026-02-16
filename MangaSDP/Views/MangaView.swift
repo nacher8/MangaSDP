@@ -12,6 +12,7 @@ struct MangaView: View {
     @Environment(\.modelContext) private var context
     @Environment(MangaUserViewModel.self) private var mangaUserVM
     @Environment(MangaFilterViewModel.self) private var mangaFilterVM
+    @Environment(MangaSearchAdvanceViewModel.self) private var mangaSearchAdvanceVM
     @Query(filter: #Predicate<MangaItem> { $0.isFromMainList == true },
            sort: [SortDescriptor(\MangaItem.score, order: .reverse)])
     private var mangas: [MangaItem]
@@ -26,11 +27,14 @@ struct MangaView: View {
                 Color.orange.opacity(0.15)
                     .ignoresSafeArea()
                 
-                if mangaFilterVM.isApplyFilter {
+                switch viewState {
+                case .filtered:
                     MangaListFilteredView()
-                } else if mangas.isEmpty {
+                case .searchAdvance:
+                    MangaListSearchAdvance()
+                case .loading:
                     ProgressView() // mirar para meter contentUnailable
-                } else {
+                case .loaded:
                     MangaListMainView(mangas: mangas,
                                       totalMangas: totalMangas,
                                       context: context)
@@ -39,9 +43,15 @@ struct MangaView: View {
             .refreshable {
                 if mangaFilterVM.isApplyFilter {
                     do {
-                        try await mangaFilterVM.applyFilter()
+                        try await mangaFilterVM.refreshFilter()
                     } catch {
-                        print("Error refreshing: \(error)")
+                        print("Error refreshing filter: \(error)")
+                    }
+                } else if mangaSearchAdvanceVM.isAdvanceSearch {
+                    do {
+                        try await mangaSearchAdvanceVM.refreshAdvanceSearch()
+                    } catch {
+                        print("Error refreshing search: \(error)")
                     }
                 } else {
                     let modelContainer = DataContainer(modelContainer: context.container)
@@ -49,7 +59,7 @@ struct MangaView: View {
                         do {
                             try await modelContainer.refreshAll()
                         } catch {
-                            print(error)
+                            print("Error refreshing mangas: \(error)")
                         }
                     }
                 }
@@ -68,9 +78,9 @@ struct MangaView: View {
                     Button(action: {
                         showAdvanceSearch.toggle()
                     }, label: {
-                        Image(systemName: "magnifyingglass.circle")
+                        Image(systemName: "magnifyingglass")
                     })
-                    .foregroundStyle(.gray)
+                    .foregroundStyle(mangaSearchAdvanceVM.isAdvanceSearch ? .yellow : .gray)
                 }
             }
             .sheet(isPresented: $showFilterSheet) {
@@ -79,6 +89,18 @@ struct MangaView: View {
             .sheet(isPresented: $showAdvanceSearch) {
                 MangaSearchAdvanceView()
             }
+        }
+    }
+    
+    var viewState: MangaListState {
+        if mangaFilterVM.isApplyFilter {
+            return .filtered
+        } else if mangaSearchAdvanceVM.isAdvanceSearch {
+            return .searchAdvance
+        } else if mangas.isEmpty {
+            return .loading
+        } else {
+            return .loaded
         }
     }
 }
