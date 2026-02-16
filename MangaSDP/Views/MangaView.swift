@@ -18,6 +18,7 @@ struct MangaView: View {
     
     @AppStorage("totalMangas") private var totalMangas: Int = 0
     @State private var showFilterSheet: Bool = false
+    @State private var showAdvanceSearch: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -62,9 +63,21 @@ struct MangaView: View {
                     })
                     .foregroundStyle(mangaFilterVM.isApplyFilter ? .yellow : .gray)
                 }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        showAdvanceSearch.toggle()
+                    }, label: {
+                        Image(systemName: "magnifyingglass.circle")
+                    })
+                    .foregroundStyle(.gray)
+                }
             }
             .sheet(isPresented: $showFilterSheet) {
                 MangaFilterView()
+            }
+            .sheet(isPresented: $showAdvanceSearch) {
+                MangaSearchAdvanceView()
             }
         }
     }

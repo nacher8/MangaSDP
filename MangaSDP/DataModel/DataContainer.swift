@@ -230,11 +230,9 @@ actor DataContainer {
         )
         let allMangas = try modelContext.fetch(fetch)
         
-        var deletedCount = 0
         for manga in allMangas {
             if !userMangaIDs.contains(manga.id) {
                 modelContext.delete(manga)
-                deletedCount += 1
             } else {
                 manga.isFromMainList = false
             }
@@ -242,17 +240,19 @@ actor DataContainer {
         
         try modelContext.save()
         
-        try await loadInitialData()
+        var newMetadata: MetadataDTO?
+        do {
+            let mangas = try await getMangas()
+            newMetadata = mangas.metadata
+            try loadMangas(mangas: mangas.items)
+        } catch {
+            throw error
+        }
+        
         try await loadCategories()
         
-        for mangaID in userMangaIDs {
-            var fetchManga = FetchDescriptor<MangaItem>(
-                predicate: #Predicate { $0.id == mangaID }
-            )
-            fetchManga.fetchLimit = 1
-            if let manga = try modelContext.fetch(fetchManga).first {
-                manga.isFromMainList = true
-            }
+        if let newMetadata {
+            updatePagination(from: newMetadata)
         }
         
         if modelContext.hasChanges {
@@ -381,3 +381,4 @@ actor DataContainer {
         totalAuthors = metadata.total
     }
 }
+
