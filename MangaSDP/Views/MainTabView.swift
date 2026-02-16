@@ -15,6 +15,7 @@ struct MainTabView: View {
     @Environment(MangaUserViewModel.self) private var mangaUserViewModel
     @Environment(MangaSearchViewModel.self) private var mangaSearchViewModel
     @Environment(MangaFilterViewModel.self) private var mangaFilterViewModel
+    @Environment(MangaSearchAdvanceViewModel.self) private var mangaSearchAdvanceViewModel
     
     @State private var selectedTab: Int = 0
 
@@ -49,6 +50,7 @@ struct MainTabView: View {
         .task {
             mangaUserViewModel.setModelContext(modelContext)
             mangaFilterViewModel.setModelContext(modelContext)
+            mangaSearchAdvanceViewModel.setModelContext(modelContext)
         }
     }
 }
@@ -67,4 +69,5 @@ struct MainTabView: View {
         .environment(MangaUserViewModel())
         .environment(MangaSearchViewModel())
         .environment(MangaFilterViewModel())
+        .environment(MangaSearchAdvanceViewModel())
 }

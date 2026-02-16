@@ -10,13 +10,22 @@ import SwiftData
 
 struct MangaFilterView: View {
     @Environment(MangaFilterViewModel.self) private var mangaFilterVM
-
+    @Environment(\.dismiss) private var dismiss
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Select category")
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
+                HStack {
+                    Text("Select category")
+                    Spacer()
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+                .font(.headline)
+                .foregroundStyle(.secondary)
                 
                 VStack(spacing: 8) {
                     ForEach(MangaFilterType.allCases) { filterType in

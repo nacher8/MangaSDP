@@ -76,4 +76,12 @@ extension URL {
         print("url:\(url.appending(queryItems: queryItems))")
         return url.appending(queryItems: queryItems)
     }
+    
+    static func getMangasAdvanceSearch(page: Int) -> URL {
+        let url = api.appending(path: "/search/manga")
+        let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
+                                          URLQueryItem(name: "per", value: "10")]
+        print("url:\(url.appending(queryItems: queryItems))")
+        return url.appending(queryItems: queryItems)
+    }
 }

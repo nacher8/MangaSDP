@@ -19,6 +19,7 @@ protocol NetworkRepository: Sendable, NetworkInteractor {
     func getMangasByTheme(theme: String, page: Int) async throws(NetworkError) -> MangaDTO
     func getAuthors(page: Int) async throws(NetworkError) -> AuthorPageDTO
     func getMangasAuthor(id: String, page: Int) async throws(NetworkError) -> MangaDTO
+    func getMangasAdvanceSearch(customSearch: CustomSearch, page: Int) async throws(NetworkError) -> MangaDTO
 }
 
 struct Network: NetworkRepository {
@@ -64,5 +65,9 @@ struct Network: NetworkRepository {
     
     func getMangasAuthor(id: String, page: Int) async throws(NetworkError) -> MangaDTO {
         return try await getJSON(.get(url: .getMangasAuthor(id: id, page: page)), type: MangaDTO.self)
+    }
+    
+    func getMangasAdvanceSearch(customSearch: CustomSearch, page: Int) async throws(NetworkError) -> MangaDTO {
+        return try await postJSON(.post(url: .getMangasAdvanceSearch(page: page), body: customSearch), type: MangaDTO.self)
     }
 }

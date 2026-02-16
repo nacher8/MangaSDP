@@ -14,6 +14,7 @@ struct MangaSDPApp: App {
     @State private var mangaSearchVM = MangaSearchViewModel()
     @State private var mangaFilterVM = MangaFilterViewModel()
     @State private var mangaAuthorVM = MangaAuthorsViewModel()
+    @State private var mangaSearchAdvanceVM = MangaSearchAdvanceViewModel()
     
     var body: some Scene {
         WindowGroup {
@@ -22,6 +23,7 @@ struct MangaSDPApp: App {
                 .environment(mangaSearchVM)
                 .environment(mangaFilterVM)
                 .environment(mangaAuthorVM)
+                .environment(mangaSearchAdvanceVM)
         }
         .modelContainer(for: [MangaItem.self,
                               MangaUser.self,
