@@ -111,6 +111,11 @@ final class MangaFilterViewModel {
         try await applyFilter()
     }
     
+    func refreshFilter() async throws {
+        page = 1
+        try await applyFilter()
+    }
+    
     func clearFilter() {
         selectedFilter = nil
         selectedOption = nil

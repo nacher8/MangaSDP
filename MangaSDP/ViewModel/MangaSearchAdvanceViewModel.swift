@@ -35,6 +35,7 @@ final class MangaSearchAdvanceViewModel {
     var page = 1
     var totalMangas: Int = 0
     var isAdvanceSearch = false
+    var isLoading: Bool = false
     
     private var modelContext: ModelContext?
     
@@ -98,11 +99,14 @@ final class MangaSearchAdvanceViewModel {
             customSearch.searchDemographics = selectedDemographics
         }
         
+        isLoading = true
+        
         let response: MangaDTO
         do {
             response = try await network.getMangasAdvanceSearch(customSearch: customSearch, page: page)
         } catch {
             print("Error en llamada API: \(error)")
+            isLoading = false
             return
         }
 
@@ -116,6 +120,7 @@ final class MangaSearchAdvanceViewModel {
         totalMangas = response.metadata.total
         print("Total Mangas Search Advance: \(totalMangas)")
         isAdvanceSearch = true
+        isLoading = false
     }
     
     func loadNextPage() async throws {
@@ -123,6 +128,11 @@ final class MangaSearchAdvanceViewModel {
         
         page += 1
         
+        try await searchAdvance()
+    }
+    
+    func refreshAdvanceSearch() async throws {
+        page = 1
         try await searchAdvance()
     }
 
