@@ -35,18 +35,10 @@ struct MainTabView: View {
                     
                 }
             }
-            Tab("Search", systemImage: "magnifyingglass", value: 2, role: .search) {
-                MangaSearchView()
-            }
-            Tab("User", systemImage: "person", value: 3) {
+            Tab("User", systemImage: "person", value: 2) {
                 MangaUserView()
             }
         }
-        .onChange(of: selectedTab, { oldValue, newValue in
-            if oldValue == 2 && newValue != 2 {
-                mangaSearchViewModel.reset()
-            }
-        })
         .task {
             mangaUserViewModel.setModelContext(modelContext)
             mangaFilterViewModel.setModelContext(modelContext)
