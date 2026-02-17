@@ -13,54 +13,153 @@ struct MangaFilterView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Text("Select category")
-                    Spacer()
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                    }
-                }
-                .font(.headline)
-                .foregroundStyle(.secondary)
-                
-                VStack(spacing: 8) {
-                    ForEach(MangaFilterType.allCases) { filterType in
-                        MangaFilterTypeRow(
-                            filterType: filterType,
-                            isSelected: mangaFilterVM.selectedFilter == filterType
-                        ) {
-                            mangaFilterVM.changeFilterType(filterType)
+        NavigationStack {
+            ZStack {
+                Color.orange.opacity(0.15)
+                    .ignoresSafeArea()
+
+                Form {
+                    Section {
+                        DisclosureGroup("Select Category") {
+                            ForEach(MangaFilterType.allCases) { filterType in
+                                HStack {
+                                    Image(systemName: iconForFilterType(filterType))
+                                        .font(.body)
+                                        .foregroundStyle(.secondary)
+                                    
+                                    Text(filterType.rawValue)
+                                        .font(.body)
+                                        .foregroundStyle(.secondary)
+                                    
+                                    Spacer()
+                                    
+                                    Button {
+                                        mangaFilterVM.changeFilterType(filterType)
+                                    } label: {
+                                        if mangaFilterVM.selectedFilter == filterType {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .foregroundStyle(.yellow)
+                                        } else {
+                                            Image(systemName: "circle")
+                                                .foregroundStyle(.gray)
+                                        }
+                                    }
+                                }
+                                
+                            }
                         }
+                    } header: {
+                        Text("Categories")
+                    }
+                    .listRowBackground(Color.white.opacity(0.8))
+                    
+                    if let selectedFilter = mangaFilterVM.selectedFilter {
+                        Section {
+                            if mangaFilterVM.availableOptions.isEmpty {
+                                HStack {
+                                    Image(systemName: "exclamationmark.triangle")
+                                        .foregroundStyle(.orange)
+                                    Text("No options available")
+                                        .font(.body)
+                                        .foregroundStyle(.secondary)
+                                }
+                            } else {
+                                DisclosureGroup("Select \(selectedFilter.rawValue)") {
+                                    ForEach(mangaFilterVM.availableOptions, id: \.self) { option in
+                                        HStack {
+                                            Text(option)
+                                                .font(.body)
+                                                .foregroundStyle(.secondary)
+                                            
+                                            Spacer()
+                                            
+                                            Button {
+                                                mangaFilterVM.selectOption(option)
+                                            } label: {
+                                                if mangaFilterVM.isOptionSelected(option) {
+                                                    Image(systemName: "checkmark.circle.fill")
+                                                        .foregroundStyle(.yellow)
+                                                } else {
+                                                    Image(systemName: "circle")
+                                                        .foregroundStyle(.gray)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } header: {
+                            Text("\(selectedFilter.rawValue)s")
+                        }
+                        .listRowBackground(Color.white.opacity(0.8))
+                    }
+                    
+                    Section {
+                        Button(action: {
+                            Task {
+                                try await mangaFilterVM.applyFilter()
+                                dismiss()
+                            }
+                        }) {
+                            HStack {
+                                Spacer()
+                                Image(systemName: "line.3.horizontal.decrease.circle")
+                                    .font(.body)
+                                Text("Filter")
+                                    .font(.headline)
+                                Spacer()
+                            }
+                            .padding(.vertical, 8)
+                        }
+                        .disabled(mangaFilterVM.selectedOption == nil)
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.roundedRectangle(radius: 12))
+                        .tint(.yellow)
+                        .listRowBackground(Color.clear)
                     }
                 }
-                .padding()
-                .background {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.systemBackground))
-                        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .scrollContentBackground(.hidden)
+            }
+            .navigationTitle("Filter category")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        mangaFilterVM.clearFilter()
+                    } label: {
+                        Image(systemName: "arrow.counterclockwise")
+                    }
+                }
+                
+                ToolbarItem {
+                    Button(role: .close) {
+                        dismiss()
+                    }
                 }
             }
-            
-            if let selectedFilter = mangaFilterVM.selectedFilter {
-                MangaFilterOptionsSection(selectedFilter: selectedFilter)
-            }
-            Spacer()
-        }
-        .padding()
-        .onAppear {
-            Task {
-                await mangaFilterVM.loadFilters()
-            }
-            if !mangaFilterVM.isApplyFilter {
-                mangaFilterVM.clearFilter()
+            .onAppear {
+                Task {
+                    await mangaFilterVM.loadFilters()
+                }
+                if !mangaFilterVM.isApplyFilter {
+                    mangaFilterVM.clearFilter()
+                }
             }
         }
     }
+
+    private func iconForFilterType(_ type: MangaFilterType) -> String {
+        switch type {
+        case .genre:
+            return "tag.fill"
+        case .demographic:
+            return "person.2.fill"
+        case .theme:
+            return "sparkles"
+        }
+    }
 }
+
 
 #Preview {
     MangaFilterView()

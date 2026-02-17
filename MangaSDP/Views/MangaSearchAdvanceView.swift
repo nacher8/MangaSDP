@@ -230,8 +230,11 @@ struct MangaSearchAdvanceView: View {
                 }
             }
             .onAppear {
-                Task {
-                    await mangaSearchAdvanceVM.loadCategories()
+                if !mangaSearchAdvanceVM.isAdvanceSearch {
+                    mangaSearchAdvanceVM.reset()
+                    Task {
+                        await mangaSearchAdvanceVM.loadCategories()
+                    }
                 }
             }
         }
