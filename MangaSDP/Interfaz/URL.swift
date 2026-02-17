@@ -84,4 +84,9 @@ extension URL {
         print("url:\(url.appending(queryItems: queryItems))")
         return url.appending(queryItems: queryItems)
     }
+    
+    static func findAuthor(search: String) async throws(NetworkError) -> URL {
+        print("url: \(api.appending(path: "/search/author").appending(path: search))")
+        return api.appending(path: "/search/author").appending(path: search)
+    }
 }

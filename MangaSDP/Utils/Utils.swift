@@ -49,4 +49,15 @@ final class Utils {
             return mangaItem
         }
     }
+    
+    static func mapDTOsToAuthors(_ dtos: [AuthorDTO]) -> [Author] {
+        dtos.map { dto in
+            let author = Author(id: dto.id,
+                                firstName: dto.firstName,
+                                lastName: dto.lastName,
+                                role: dto.role,
+                                isFromAuthorsList: false)
+            return author
+        }
+    }
 }

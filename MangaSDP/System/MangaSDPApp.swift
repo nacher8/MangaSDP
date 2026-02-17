@@ -11,7 +11,6 @@ import SwiftData
 @main
 struct MangaSDPApp: App {
     @State private var mangaUserVM = MangaUserViewModel()
-    @State private var mangaSearchVM = MangaSearchViewModel()
     @State private var mangaFilterVM = MangaFilterViewModel()
     @State private var mangaAuthorVM = MangaAuthorsViewModel()
     @State private var mangaSearchAdvanceVM = MangaSearchAdvanceViewModel()
@@ -20,7 +19,6 @@ struct MangaSDPApp: App {
         WindowGroup {
             MainTabView()
                 .environment(mangaUserVM)
-                .environment(mangaSearchVM)
                 .environment(mangaFilterVM)
                 .environment(mangaAuthorVM)
                 .environment(mangaSearchAdvanceVM)

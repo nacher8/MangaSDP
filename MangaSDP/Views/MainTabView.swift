@@ -13,7 +13,6 @@ import SwiftData
 struct MainTabView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(MangaUserViewModel.self) private var mangaUserViewModel
-    @Environment(MangaSearchViewModel.self) private var mangaSearchViewModel
     @Environment(MangaFilterViewModel.self) private var mangaFilterViewModel
     @Environment(MangaSearchAdvanceViewModel.self) private var mangaSearchAdvanceViewModel
     
@@ -59,7 +58,6 @@ struct MainTabView: View {
             MangaCategories.self
         ], inMemory: true)
         .environment(MangaUserViewModel())
-        .environment(MangaSearchViewModel())
         .environment(MangaFilterViewModel())
         .environment(MangaSearchAdvanceViewModel())
 }
