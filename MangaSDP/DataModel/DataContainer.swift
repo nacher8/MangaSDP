@@ -94,12 +94,12 @@ actor DataContainer {
         }
     }
     
-    /// Carga autores asociados a mangas (no marca isFromAuthorsList)
+    /// Carga autores asociados a mangas desde MangaView (no marca isFromAuthorsList)
     func loadAuthors(_ authorsDTO: [AuthorDTO]) throws -> [Author] {
         return try loadAuthorsInternal(authorsDTO, isFromAuthorsList: false)
     }
     
-    /// Carga autores desde la lista completa de autores (marca isFromAuthorsList)
+    /// Carga autores desde la lista completa de autores desde MangaSDPApp (marca isFromAuthorsList)
     private func loadAuthorsForList(_ authorsDTO: [AuthorDTO]) throws -> [Author] {
         return try loadAuthorsInternal(authorsDTO, isFromAuthorsList: true)
     }

@@ -17,8 +17,14 @@ final class MangaAuthorsViewModel {
     var totalMangas: Int = 0
     var isLoading: Bool = false
     
+    var authorSearchText: String = ""
+    var authorsSearchResult: [Author] = []
+    var isSearchAuthors: Bool = false
+    
+    // MARK: - Get mangas Author
     func getMangasAuthor(id: String) async throws {
         isLoading = true
+        isSearchAuthors = true
         
         let response: MangaDTO
         do {
@@ -54,5 +60,29 @@ final class MangaAuthorsViewModel {
         mangaResult = []
         totalMangas = 0
         page = 1
+    }
+    
+    // MARK: - Search Authors
+    func searchAuthors() async throws {
+        isLoading = true
+        
+        let response: [AuthorDTO]
+        
+        do {
+            response = try await network.findAuthor(search: authorSearchText)
+        } catch {
+            print("Error en llamada API: \(error)")
+            isLoading = false
+            return
+        }
+        
+        authorsSearchResult = Utils.mapDTOsToAuthors(response)
+        isSearchAuthors = true
+        isLoading = false
+    }
+    
+    func resetSearchAuthor() {
+        authorsSearchResult = []
+        isSearchAuthors = false
     }
 }

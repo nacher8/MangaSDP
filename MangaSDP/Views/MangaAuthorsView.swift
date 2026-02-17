@@ -10,12 +10,14 @@ import SwiftData
 
 struct MangaAuthorsView: View {
     @Environment(\.modelContext) private var context
+    @Environment(MangaAuthorsViewModel.self) private var mangaAuthorViewModel
     @Query(filter: #Predicate<Author> { $0.isFromAuthorsList == true })
     private var authors: [Author]
     
     @AppStorage("totalAuthors") private var totalAuthors: Int = 0
     
     var body: some View {
+        @Bindable var mangaAuthorVM = mangaAuthorViewModel
         NavigationStack {
             GeometryReader { geometry in
                 ZStack {
@@ -23,14 +25,10 @@ struct MangaAuthorsView: View {
                         .ignoresSafeArea()
                     
                     List {
-                        if authors.isEmpty {
+                        if mangaAuthorVM.isLoading {
                             VStack {
                                 Spacer()
-                                ContentUnavailableView {
-                                    Label("No Authors Yet", systemImage: "long.text.page.and.pencil.fill")
-                                } description: {
-                                    Text("Pull down to refresh and load authors")
-                                }
+                                ProgressView()
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: geometry.size.height - 100)
@@ -38,29 +36,67 @@ struct MangaAuthorsView: View {
                             .listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets())
                         } else {
-                            ForEach(authors) { author in
-                                NavigationLink(value: author) {
-                                    MangaAuthorRow(author: author)
+                            if !mangaAuthorVM.authorSearchText.isEmpty {
+                                if mangaAuthorVM.authorsSearchResult.isEmpty {
+                                    VStack {
+                                        Spacer()
+                                        searchView
+                                        Spacer()
+                                    }
+                                    .frame(maxWidth: .infinity, minHeight: geometry.size.height - 100)
+                                    .listRowBackground(Color.clear)
+                                    .listRowSeparator(.hidden)
+                                    .listRowInsets(EdgeInsets())
+                                } else {
+                                    ForEach(mangaAuthorVM.authorsSearchResult) { author in
+                                        NavigationLink(value: author) {
+                                            MangaAuthorRow(author: author)
+                                        }
+                                        .listRowSeparator(.hidden)
+                                        .listRowBackground(Color.clear)
+                                    }
                                 }
-                                .listRowSeparator(.hidden)
-                                .listRowBackground(Color.clear)
-                            }
-                            
-                            if authors.count < totalAuthors {
-                                HStack {
-                                    Spacer()
-                                    ProgressView()
-                                    Spacer()
-                                }
-                                .listRowSeparator(.hidden)
-                                .listRowBackground(Color.clear)
-                                .onAppear {
-                                    let modelContainer = DataContainer(modelContainer: context.container)
-                                    Task {
-                                        do {
-                                            try await modelContainer.loadNextPageAuthors()
-                                        } catch {
-                                            print(error)
+                            } else {
+                                if authors.isEmpty {
+                                    VStack {
+                                        Spacer()
+                                        ContentUnavailableView {
+                                            Label("No Authors Yet", systemImage: "long.text.page.and.pencil.fill")
+                                        } description: {
+                                            Text("Pull down to refresh and load authors")
+                                        }
+                                        Spacer()
+                                    }
+                                    .frame(maxWidth: .infinity, minHeight: geometry.size.height - 100)
+                                    .listRowBackground(Color.clear)
+                                    .listRowSeparator(.hidden)
+                                    .listRowInsets(EdgeInsets())
+                                } else {
+                                    ForEach(authors) { author in
+                                        NavigationLink(value: author) {
+                                            MangaAuthorRow(author: author)
+                                        }
+                                        .listRowSeparator(.hidden)
+                                        .listRowBackground(Color.clear)
+                                    }
+                                    
+                                    if authors.count < totalAuthors {
+                                        HStack {
+                                            Spacer()
+                                            ProgressView()
+                                            Spacer()
+                                        }
+                                        .listRowSeparator(.hidden)
+                                        .listRowBackground(Color.clear)
+                                        .onAppear {
+                                            let modelContainer = DataContainer(modelContainer: context.container)
+                                            Task {
+                                                do {
+                                                    try await modelContainer.loadNextPageAuthors()
+                                                } catch {
+                                                    print(error)
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -69,6 +105,7 @@ struct MangaAuthorsView: View {
                     }
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
+                    .searchable(text: $mangaAuthorVM.authorSearchText, prompt: "Search authors (min. 3 characters)")
                 }
                 .navigationTitle("Authors")
                 .navigationDestination(for: Author.self) { author in
@@ -82,6 +119,30 @@ struct MangaAuthorsView: View {
                         print("Error refreshing: \(error)")
                     }
                 }
+                .onChange(of: mangaAuthorVM.authorSearchText) { oldValue, newValue in
+                    if newValue.count >= 3 {
+                        mangaAuthorVM.resetSearchAuthor()
+                        Task {
+                            try await mangaAuthorVM.searchAuthors()
+                        }
+                    } else {
+                        mangaAuthorVM.resetSearchAuthor()
+                    }
+                }
+            }
+        }
+    }
+    
+    var searchView: some View {
+        Group {
+            if mangaAuthorViewModel.authorSearchText.count <= 2 {
+                ContentUnavailableView("Keep swimming",
+                                       systemImage: "keyboard",
+                                       description: Text("Type at least 3 characters to search."))
+            } else if mangaAuthorViewModel.authorsSearchResult.isEmpty {
+                ContentUnavailableView("No authors found",
+                                       systemImage: "long.text.page.and.pencil.fill",
+                                       description: Text("There're no authors at the database with your search criteria."))
             }
         }
     }
