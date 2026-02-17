@@ -187,12 +187,12 @@ extension MangaItem {
     }
     
     var chaptersString: String {
-        guard let chapters else { return "-" }
+        guard let chapters else { return "N/A" }
         return "\(chapters)"
     }
     
     var volumesString: String {
-        guard let volumes else { return "-" }
+        guard let volumes else { return "N/A" }
         return "\(volumes)"
     }
 }

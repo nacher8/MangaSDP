@@ -106,6 +106,8 @@ struct MangaAuthorsView: View {
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
                     .searchable(text: $mangaAuthorVM.authorSearchText, prompt: "Search authors (min. 3 characters)")
+                    .autocorrectionDisabled()
+                    .keyboardType(.alphabet)
                 }
                 .navigationTitle("Authors")
                 .navigationDestination(for: Author.self) { author in

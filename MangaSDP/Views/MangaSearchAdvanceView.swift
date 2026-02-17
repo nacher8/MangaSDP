@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MangaSearchAdvanceView: View {
     @Environment(MangaSearchAdvanceViewModel.self) private var mangaSearchAdvanceViewModel
+    @Environment(MangaFilterViewModel.self) private var mangaFilterVM
     @Environment(\.dismiss) private var dismiss
     @FocusState private var isTitleFieldFocused: Bool
     @FocusState private var isFirstNameFieldFocused: Bool
@@ -25,12 +26,13 @@ struct MangaSearchAdvanceView: View {
                     Section {
                         HStack {
                             Image(systemName: "book.fill")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                                 .frame(width: 20)
                             
                             TextField("Enter manga title", text: $mangaSearchAdvanceVM.mangaTitle)
                                 .focused($isTitleFieldFocused)
                                 .textInputAutocapitalization(.words)
+                                .keyboardType(.alphabet)
                                 .autocorrectionDisabled()
                             
                             if !mangaSearchAdvanceVM.mangaTitle.isEmpty {
@@ -50,12 +52,13 @@ struct MangaSearchAdvanceView: View {
                     Section {
                         HStack {
                             Image(systemName: "long.text.page.and.pencil.fill")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                                 .frame(width: 20)
                             
                             TextField("Enter first name author", text: $mangaSearchAdvanceVM.mangaFirstName)
                                 .focused($isFirstNameFieldFocused)
                                 .textInputAutocapitalization(.words)
+                                .keyboardType(.alphabet)
                                 .autocorrectionDisabled()
                             
                             if !mangaSearchAdvanceVM.mangaFirstName.isEmpty {
@@ -75,12 +78,13 @@ struct MangaSearchAdvanceView: View {
                     Section {
                         HStack {
                             Image(systemName: "long.text.page.and.pencil.fill")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                                 .frame(width: 20)
                             
                             TextField("Enter last name author", text: $mangaSearchAdvanceVM.mangaLastName)
                                 .focused($isLastNameFieldFocused)
                                 .textInputAutocapitalization(.words)
+                                .keyboardType(.alphabet)
                                 .autocorrectionDisabled()
                             
                             if !mangaSearchAdvanceVM.mangaLastName.isEmpty {
@@ -186,6 +190,9 @@ struct MangaSearchAdvanceView: View {
                     
                     Section {
                         Button(action: {
+                            if mangaFilterVM.isApplyFilter {
+                                mangaFilterVM.clearFilter()
+                            }
                             Task {
                                 try await mangaSearchAdvanceVM.searchAdvance()
                                 dismiss()

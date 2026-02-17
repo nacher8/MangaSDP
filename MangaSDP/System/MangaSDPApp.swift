@@ -22,6 +22,7 @@ struct MangaSDPApp: App {
                 .environment(mangaFilterVM)
                 .environment(mangaAuthorVM)
                 .environment(mangaSearchAdvanceVM)
+                .preferredColorScheme(.light)
         }
         .modelContainer(for: [MangaItem.self,
                               MangaUser.self,
