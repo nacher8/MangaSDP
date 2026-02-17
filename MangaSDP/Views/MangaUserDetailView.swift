@@ -49,68 +49,70 @@ struct MangaUserDetailView: View {
                 }
                 .listRowBackground(Color.clear)
                 
-                Section("Progress") {
-                    if let totalVolumes = manga.volumes {
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text("Collection Progress")
-                                Spacer()
-                                Text("\(mangaUser.ownedVolumes) / \(totalVolumes)")
-                                    .foregroundStyle(.secondary)
+                if manga.volumes != nil {
+                    Section("Progress") {
+                        if let totalVolumes = manga.volumes {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Text("Collection Progress")
+                                    Spacer()
+                                    Text("\(mangaUser.ownedVolumes) / \(totalVolumes)")
+                                        .foregroundStyle(.secondary)
+                                }
+                                if totalVolumes > 0 {
+                                    ProgressView(value: Double(mangaUser.ownedVolumes), total: Double(totalVolumes))
+                                        .tint(mangaUser.isCompleted ? .green : .orange)
+                                }
                             }
-                            if totalVolumes > 0 {
-                                ProgressView(value: Double(mangaUser.ownedVolumes), total: Double(totalVolumes))
-                                    .tint(mangaUser.isCompleted ? .green : .orange)
-                            }
+                        }
+                        
+                        if mangaUser.isCompleted {
+                            Label("Collection Complete!", systemImage: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
                         }
                     }
                     
-                    if mangaUser.isCompleted {
-                        Label("Collection Complete!", systemImage: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                    }
-                }
-                
-                Section("Owned Volumes") {
-                    Stepper(
-                        value: $mangaUser.ownedVolumes,
-                        in: 0...(manga.volumes ?? 999),
-                        step: 1
-                    ) {
-                        HStack {
-                            Text("Volumes Owned")
-                            Spacer()
-                            Text("\(mangaUser.ownedVolumes)")
-                                .font(.title2)
-                                .bold()
-                                .monospacedDigit()
+                    Section("Owned Volumes") {
+                        Stepper(
+                            value: $mangaUser.ownedVolumes,
+                            in: 0...(manga.volumes ?? 9999),
+                            step: 1
+                        ) {
+                            HStack {
+                                Text("Volumes Owned")
+                                Spacer()
+                                Text("\(mangaUser.ownedVolumes)")
+                                    .font(.title2)
+                                    .bold()
+                                    .monospacedDigit()
+                            }
+                        }
+                        .onChange(of: mangaUser.ownedVolumes) { oldValue, newValue in
+                            if mangaUser.currentVolume > newValue {
+                                mangaUser.currentVolume = newValue
+                            }
+                            mangaUserVM.saveUserCollection()
                         }
                     }
-                    .onChange(of: mangaUser.ownedVolumes) { oldValue, newValue in
-                        if mangaUser.currentVolume > newValue {
-                            mangaUser.currentVolume = newValue
+                    
+                    Section("Reading Progress") {
+                        Stepper(
+                            value: $mangaUser.currentVolume,
+                            in: 0...mangaUser.ownedVolumes,
+                            step: 1
+                        ) {
+                            HStack {
+                                Text("Current Volume")
+                                Spacer()
+                                Text("\(mangaUser.currentVolume)")
+                                    .font(.title2)
+                                    .bold()
+                                    .monospacedDigit()
+                            }
                         }
-                        mangaUserVM.saveUserCollection()
-                    }
-                }
-                
-                Section("Reading Progress") {
-                    Stepper(
-                        value: $mangaUser.currentVolume,
-                        in: 0...mangaUser.ownedVolumes,
-                        step: 1
-                    ) {
-                        HStack {
-                            Text("Current Volume")
-                            Spacer()
-                            Text("\(mangaUser.currentVolume)")
-                                .font(.title2)
-                                .bold()
-                                .monospacedDigit()
+                        .onChange(of: mangaUser.currentVolume) { _, _ in
+                            mangaUserVM.saveUserCollection()
                         }
-                    }
-                    .onChange(of: mangaUser.currentVolume) { _, _ in
-                        mangaUserVM.saveUserCollection()
                     }
                 }
                 
@@ -126,19 +128,25 @@ struct MangaUserDetailView: View {
                         Text("Score")
                     }
                     
-                    if let totalVolumes = manga.volumes {
-                        LabeledContent("Total Volumes", value: "\(totalVolumes)")
-                    }
+                    LabeledContent("Total Volumes", value: "\(manga.volumesString)")
                     
-                    if let chapters = manga.chapters {
-                        LabeledContent("Total Chapters", value: "\(chapters)")
-                    }
+                    LabeledContent("Total Volumes", value: "\(manga.chaptersString)")
                 }
             }
             .scrollContentBackground(.hidden)
         }
         .navigationTitle("Collection Details")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    mangaUserVM.toggleCollection(manga)
+                } label: {
+                    Image(systemName: mangaUserVM.isUserCollection(manga.id) ? "books.vertical.fill" : "books.vertical")
+                }
+                .tint(mangaUserVM.isUserCollection(manga.id) ? .yellow : .gray)
+            }
+        }
     }
 }
 

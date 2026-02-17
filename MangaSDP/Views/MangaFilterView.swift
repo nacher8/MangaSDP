@@ -10,6 +10,7 @@ import SwiftData
 
 struct MangaFilterView: View {
     @Environment(MangaFilterViewModel.self) private var mangaFilterVM
+    @Environment(MangaSearchAdvanceViewModel.self) private var mangaSearchAdvanceVM
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -96,6 +97,9 @@ struct MangaFilterView: View {
                     
                     Section {
                         Button(action: {
+                            if mangaSearchAdvanceVM.isAdvanceSearch {
+                                mangaSearchAdvanceVM.reset()
+                            }
                             Task {
                                 try await mangaFilterVM.applyFilter()
                                 dismiss()
