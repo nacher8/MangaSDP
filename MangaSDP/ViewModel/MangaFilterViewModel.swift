@@ -125,6 +125,12 @@ final class MangaFilterViewModel {
         page = 1
     }
     
+    func resetData() {
+        mangaResult = []
+        totalMangas = 0
+        page = 1
+    }
+    
     func changeFilterType(_ newType: MangaFilterType) {
         if selectedFilter != newType {
             selectedOption = nil

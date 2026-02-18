@@ -190,6 +190,7 @@ struct MangaSearchAdvanceView: View {
                     
                     Section {
                         Button(action: {
+                            mangaSearchAdvanceVM.resetData()
                             if mangaFilterVM.isApplyFilter {
                                 mangaFilterVM.clearFilter()
                             }
