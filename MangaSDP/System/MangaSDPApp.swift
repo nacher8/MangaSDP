@@ -17,7 +17,7 @@ struct MangaSDPApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            MangaRootView()
                 .environment(mangaUserVM)
                 .environment(mangaFilterVM)
                 .environment(mangaAuthorVM)

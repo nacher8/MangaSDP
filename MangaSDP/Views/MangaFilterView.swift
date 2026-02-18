@@ -101,6 +101,7 @@ struct MangaFilterView: View {
                                 mangaSearchAdvanceVM.reset()
                             }
                             Task {
+                                mangaFilterVM.resetData()
                                 try await mangaFilterVM.applyFilter()
                                 dismiss()
                             }

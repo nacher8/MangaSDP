@@ -145,4 +145,10 @@ final class MangaSearchAdvanceViewModel {
         selectedDemographics = []
         isAdvanceSearch = false
     }
+    
+    func resetData() {
+        mangaResult = []
+        totalMangas = 0
+        page = 1
+    }
 }
