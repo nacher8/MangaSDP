@@ -10,6 +10,7 @@ import SwiftData
 
 struct MangaUserDetailView: View {
     @Environment(MangaUserViewModel.self) private var mangaUserVM
+    @Environment(\.dismiss) private var dismiss
     @Bindable var mangaUser: MangaUser
     
     var body: some View {
@@ -140,7 +141,11 @@ struct MangaUserDetailView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
+                    let isInCollection = mangaUserVM.isUserCollection(manga.id)
                     mangaUserVM.toggleCollection(manga)
+                    if isInCollection {
+                        dismiss()
+                    }
                 } label: {
                     Image(systemName: mangaUserVM.isUserCollection(manga.id) ? "books.vertical.fill" : "books.vertical")
                 }

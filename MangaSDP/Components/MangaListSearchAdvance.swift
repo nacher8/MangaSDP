@@ -22,43 +22,11 @@ struct MangaListSearchAdvance: View {
                                        systemImage: "magnifyingglass.circle",
                                        description: Text("No mangas found in the advanced search"))
             } else {
-                List {
-                    ForEach(mangaSearchAdvanceVM.mangaResult) { manga in
-                        NavigationLink(value: manga) {
-                            MangaRow(manga: manga)
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            let isUserCollection = mangaUserVM.isUserCollection(manga.id)
-                            Button {
-                                mangaUserVM.toggleCollection(manga)
-                            } label: {
-                                Label(isUserCollection ? "Delete" : "Add",
-                                      systemImage: "books.vertical")
-                            }
-                            .tint(isUserCollection ? .gray : .yellow)
-                        }
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
-                    }
-                    
-                    // Paginación para resultados filtrados
-                    if mangaSearchAdvanceVM.mangaResult.count < mangaSearchAdvanceVM.totalMangas {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
-                        .onAppear {
-                            Task {
-                                try await mangaSearchAdvanceVM.loadNextPage()
-                            }
-                        }
-                    }
+                if isiPhone {
+                    ListSearchAdvanceViewIphone()
+                } else {
+                    ListSearchAdvanceViewIpad()
                 }
-                .listStyle(.plain)
-                .scrollContentBackground(.hidden)
             }
         }
         .navigationTitle("Saotome Manga")
