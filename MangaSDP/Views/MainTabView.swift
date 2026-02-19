@@ -21,17 +21,13 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             Tab("Mangas", systemImage: "book", value: 0) {
-                if isiPhone {
-                    MangaView()
-                } else {
-                    
-                }
+                MangaView()
             }
             Tab("Authors", systemImage: "long.text.page.and.pencil.fill", value: 1) {
                 if isiPhone {
                     MangaAuthorsView()
                 } else {
-                    
+                    MangaAuthorsIpadView()
                 }
             }
             Tab("User", systemImage: "person", value: 2) {
