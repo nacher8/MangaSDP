@@ -251,4 +251,6 @@ struct MangaSearchAdvanceView: View {
 
 #Preview {
     MangaSearchAdvanceView()
+        .environment(MangaSearchAdvanceViewModel())
+        .environment(MangaFilterViewModel())
 }
