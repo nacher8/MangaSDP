@@ -118,4 +118,5 @@ struct MangaView: View {
         ], inMemory: true)
         .environment(MangaUserViewModel())
         .environment(MangaFilterViewModel())
+        .environment(MangaSearchAdvanceViewModel())
 }

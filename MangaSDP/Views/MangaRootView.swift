@@ -30,4 +30,7 @@ struct MangaRootView: View {
 
 #Preview {
     MangaRootView()
+        .environment(MangaUserViewModel())
+        .environment(MangaFilterViewModel())
+        .environment(MangaSearchAdvanceViewModel())
 }

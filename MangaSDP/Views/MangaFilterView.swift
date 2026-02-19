@@ -169,4 +169,5 @@ struct MangaFilterView: View {
 #Preview {
     MangaFilterView()
         .environment(MangaFilterViewModel())
+        .environment(MangaSearchAdvanceViewModel())
 }
