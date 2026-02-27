@@ -24,6 +24,7 @@ Native iOS application to explore, filter, and manage a personal manga collectio
 ### iPhone
 <p align="center">
   <img width="160" hspace="10" src="https://github.com/user-attachments/assets/63c8e59c-2cfb-4c57-ae40-28f8c9511f7e" />
+  <img width="160" hspace="10" src="https://github.com/user-attachments/assets/b611ca15-b15e-4227-bdac-ffcbf78cd186" />
   <img width="160" hspace="10" src="https://github.com/user-attachments/assets/1fd4747a-82fe-47ed-9283-45138966480b" />
   <img width="160" hspace="10" src="https://github.com/user-attachments/assets/46d6b3bf-5f92-4a76-8c38-4f6b6f4edf2c" />
   <img width="160" hspace="10" src="https://github.com/user-attachments/assets/f423cebd-6971-4258-98fd-c6f3711941d0" />
