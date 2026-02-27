@@ -118,7 +118,6 @@ final class MangaSearchAdvanceViewModel {
             mangaResult.append(contentsOf: newMangas)
         }
         totalMangas = response.metadata.total
-        print("Total Mangas Search Advance: \(totalMangas)")
         isAdvanceSearch = true
         isLoading = false
     }

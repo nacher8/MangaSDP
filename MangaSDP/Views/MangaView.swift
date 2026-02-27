@@ -33,7 +33,7 @@ struct MangaView: View {
                 case .searchAdvance:
                     MangaListSearchAdvance()
                 case .loading:
-                    ProgressView() // mirar para meter contentUnailable
+                    ProgressView()
                 case .loaded:
                     MangaListMainView(mangas: mangas,
                                       totalMangas: totalMangas,

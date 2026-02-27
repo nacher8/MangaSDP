@@ -16,7 +16,6 @@ extension URL {
         let url = api.appending(path: "/list/bestMangas")
         let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
                                           URLQueryItem(name: "per", value: "10")]
-        print("url:\(url.appending(queryItems: queryItems))")
         return url.appending(queryItems: queryItems)
     }
 
@@ -24,7 +23,6 @@ extension URL {
         let url = api.appending(path: "/search/mangasContains").appending(path: search)
         let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
                                           URLQueryItem(name: "per", value: "10")]
-        print("url:\(url.appending(queryItems: queryItems))")
         return url.appending(queryItems: queryItems)
     }
     
@@ -65,7 +63,6 @@ extension URL {
         let url = api.appending(path: "/list/authorsPaged")
         let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
                                           URLQueryItem(name: "per", value: "10")]
-        print("url:\(url.appending(queryItems: queryItems))")
         return url.appending(queryItems: queryItems)
     }
     
@@ -73,7 +70,6 @@ extension URL {
         let url = api.appending(path: "/list/mangaByAuthor").appending(path: id)
         let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
                                           URLQueryItem(name: "per", value: "10")]
-        print("url:\(url.appending(queryItems: queryItems))")
         return url.appending(queryItems: queryItems)
     }
     
@@ -81,12 +77,10 @@ extension URL {
         let url = api.appending(path: "/search/manga")
         let queryItems: [URLQueryItem] = [URLQueryItem(name: "page", value: "\(page)"),
                                           URLQueryItem(name: "per", value: "10")]
-        print("url:\(url.appending(queryItems: queryItems))")
         return url.appending(queryItems: queryItems)
     }
     
     static func findAuthor(search: String) async throws(NetworkError) -> URL {
-        print("url: \(api.appending(path: "/search/author").appending(path: search))")
-        return api.appending(path: "/search/author").appending(path: search)
+        api.appending(path: "/search/author").appending(path: search)
     }
 }
