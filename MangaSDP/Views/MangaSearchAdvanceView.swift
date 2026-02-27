@@ -233,6 +233,9 @@ struct MangaSearchAdvanceView: View {
                 
                 ToolbarItem {
                     Button(role: .close) {
+                        if !mangaSearchAdvanceVM.isSearchValid {
+                            mangaSearchAdvanceVM.reset()
+                        }
                         dismiss()
                     }
                 }
